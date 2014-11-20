@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 
 """
-Dialog manager library.
-
+Phrase processing module.
 """
 __author__ = "Mark Birger"
 __date__ = "19 Nov 2014"
@@ -17,7 +16,8 @@ class Phrase:
     compare for comparison with input phrase
     accept to get dictionary of new variables
     """
-    def __init__(self, origin):
+    def __init__(self, origin, scope):
+        self.scope = scope
         self.origin = origin
         self.phrase = origin
         self.substitute = []
@@ -128,7 +128,7 @@ class Phrase:
         tmp = self.phrase
         offset = 0
         for subs in self.substitute:
-            value = str(globals()[subs[0]]) #TODO: change globals
+            value = str(self.scope.get(subs[0])) #TODO: change globals
             tmp = tmp[:subs[1]+offset] + value + tmp[subs[2]+offset:]
             offset = offset - (subs[2] - subs[1]) + len(value)
         return tmp
@@ -143,7 +143,7 @@ class Phrase:
             toset[setter[0]] = ast.literal_eval(setter[1])
         if input_phrase is not None:
             pass #TODO: flexible parsing
-        return toset
+        self.scope.set(toset)
 
     def compare(self, input_phrase):
         """
@@ -155,3 +155,26 @@ class Phrase:
     def __str__(self):
         return self.evaluate()
 
+# btc_rate = 400
+# cpu_temp = 45
+# okaa = "pampam"
+
+# phrase = Phrase("It's `btc_rate` euros for one bitcoin `cpu_temp` `variable_toset:\"literal\"` `friendly:False` gghhg `okaa` `variable_name~word` lol")
+# print(phrase)
+# print(phrase.evaluate())
+# print(phrase.accept())
+# print(phrase.compare("It's 400 euros for one bitcoin 45   gghhg pampam word lol"))
+
+# OUTPUT:
+
+# It's `btc_rate` euros for one bitcoin `cpu_temp`   gghhg `okaa`
+# word
+#  lol
+# It's `btc_rate` euros for one bitcoin `cpu_temp`   gghhg `okaa` word lol
+# [['btc_rate', 5, 15], ['cpu_temp', 38, 48], ['okaa', 57, 63]]
+# [['variable_toset', '"literal"', 49, 75], ['friendly', 'False', 50, 66]]
+# [['variable_name', 'word', 64, 68]]
+# It's 400 euros for one bitcoin 45   gghhg pampam word lol
+# It's 400 euros for one bitcoin 45   gghhg pampam word lol
+# {'friendly': False, 'variable_toset': 'literal'}
+# True

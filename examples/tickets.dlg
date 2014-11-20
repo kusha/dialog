@@ -1,0 +1,102 @@
+# SIMPLE PHRASES:
+What you can do? \
+Hmmm?
+	I'll report you if i can't do something.
+
+How are you?
+	Fine, thanx
+
+# VARIABLES/FUNCTIONS: `` 
+What time is it?
+	A time is `get_time`.
+
+What is your name?
+	My name is `name`.
+
+Fuck you!
+	Why you so angry? `angry:True`
+		Am i angry?
+			It is `angry`
+
+# SETTING VARIABLES:
+#You're stupid `angry:True`
+#	I'm not
+#		Sorry `angry:False`
+
+I am angry?
+	`is_angry`
+
+#Your name is `name~John`
+#	No problems
+
+#SETTING LIKE VARIABLES:
+My name is `collocutor~Mark`
+	Hello, `collocutor`
+
+#CALLING LONG ACTION
+#Make me a coffee
+#	I'm going to make you a coffee
+#	`make_coffee?`
+	# nelze pouzit `make_coffee`? - vrati na konci pharse
+#		'no water'
+#			Sorry, there is no water...
+#		'no coffee'
+#			Sorry, there is no coffee...
+#			Can i add coffee to your shopping list?
+#				Yes
+#					`add_coffee_shopping_list`
+
+
+#??? VARIABELES COMPARISON
+#Am i angry?
+#	`angry`?
+#		True
+#			Sure, you are angry
+#		False
+#			I'm don't think so
+#		None
+#			Really i don't know
+
+# How tall is mount Everest?
+# How many tea spoon in a table spoon?
+#	--> wolfram alpha?
+
+#Put something to todo-list.
+#	I'll put something into your shopping list.
+#Set a timer for eight minutes.
+#Turn alarm off.
+
+What day is it today?
+	Today is `day_of_week`
+
+#Tell me a joke.
+#How do you spoke something?
+#Determ something.
+
+#<empty>
+#	Yeah, i'm listing.
+#	How can i help you?
+
+#Play rock music
+#	Stop.
+
+#Where are you going?
+#	I'm going to `city:Nevada`
+#		Ok, you are going to <city>
+#		It's <distance()> kilometers away.
+#		I need to call taxi.
+#			`call_taxi()`
+
+`quality?`
+	poor
+		Sorry, can you reapeat a phrase
+	normal
+
+
+
+
+
+
+
+
+

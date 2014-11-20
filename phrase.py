@@ -154,27 +154,3 @@ class Phrase:
 
     def __str__(self):
         return self.evaluate()
-
-# btc_rate = 400
-# cpu_temp = 45
-# okaa = "pampam"
-
-# phrase = Phrase("It's `btc_rate` euros for one bitcoin `cpu_temp` `variable_toset:\"literal\"` `friendly:False` gghhg `okaa` `variable_name~word` lol")
-# print(phrase)
-# print(phrase.evaluate())
-# print(phrase.accept())
-# print(phrase.compare("It's 400 euros for one bitcoin 45   gghhg pampam word lol"))
-
-# OUTPUT:
-
-# It's `btc_rate` euros for one bitcoin `cpu_temp`   gghhg `okaa`
-# word
-#  lol
-# It's `btc_rate` euros for one bitcoin `cpu_temp`   gghhg `okaa` word lol
-# [['btc_rate', 5, 15], ['cpu_temp', 38, 48], ['okaa', 57, 63]]
-# [['variable_toset', '"literal"', 49, 75], ['friendly', 'False', 50, 66]]
-# [['variable_name', 'word', 64, 68]]
-# It's 400 euros for one bitcoin 45   gghhg pampam word lol
-# It's 400 euros for one bitcoin 45   gghhg pampam word lol
-# {'friendly': False, 'variable_toset': 'literal'}
-# True

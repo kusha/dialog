@@ -10,15 +10,25 @@ from parser import Parser
 from scope import Scope
 
 class Dialog:
+    """
+    Dialog interperter class.
+    """
     def __init__(self, scope):
         self.expected = []
         self.scope = Scope(scope)
 
     def load(self, filename):
+        """
+        Loads dialog from the file.
+        Uses Parser module.
+        """
         parser = Parser(filename, self.scope)
         self.expected.extend(parser.result())
 
     def start(self):
+        """
+        Interprets dialog
+        """
         while True:
             input_phrase = self.listen()
             for state in self.expected:
@@ -32,5 +42,8 @@ class Dialog:
                 print("Bot> ???")
 
     def listen(self):
+        """
+        Waiting for user input.
+        """
         #TODO: microphone parsing
         return input("You> ")

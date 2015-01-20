@@ -24,15 +24,11 @@ class Dialog:
         self.returns = Returns()
 
     def load(self, filename):
-<<<<<<< HEAD
-        parser = Parser(filename, self.scope, self.returns)
-=======
         """
         Loads dialog from the file.
         Uses Parser module.
         """
-        parser = Parser(filename, self.scope)
->>>>>>> FETCH_HEAD
+        parser = Parser(filename, self.scope, self.returns)
         self.expected.extend(parser.result())
 
     def _extend_expected(self, quesitons):
@@ -44,7 +40,9 @@ class Dialog:
                 self.expected.append(new)
 
     def start(self):
-<<<<<<< HEAD
+        """
+        Interprets dialog
+        """
         occupation = multiprocessing.Event()
         listener_queue = multiprocessing.Queue(maxsize=0)
         recognizer_queue = multiprocessing.Queue(maxsize=0)
@@ -66,12 +64,6 @@ class Dialog:
         for state in self.expected:
             print("\t%s" % (state))
         print("======")
-        
-=======
-        """
-        Interprets dialog
-        """
->>>>>>> FETCH_HEAD
         while True:
             # process routines answers
             answers = self.returns.get_returns()
@@ -96,7 +88,6 @@ class Dialog:
             state = states_probability[0][0]
             if states_probability[0][1] < 0.2:
                 print("Bot> ???")
-<<<<<<< HEAD
             else:
                 tosay, questions = state.accept(input_phrase)
                 for answer in tosay:
@@ -104,12 +95,4 @@ class Dialog:
                         speaker_queue.put(answer)
                         print("Bot> "+answer)
                 self._extend_expected(questions)
-=======
 
-    def listen(self):
-        """
-        Waiting for user input.
-        """
-        #TODO: microphone parsing
-        return input("You> ")
->>>>>>> FETCH_HEAD

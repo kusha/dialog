@@ -29,7 +29,9 @@ class Scope:
             return self.scope[name]
 
     def set(self, variables):
-<<<<<<< HEAD
+        """
+        Set ups new variables from dictionary.
+        """
         self.scope.update(variables)
 
     def parallel(self, name, return_queue):
@@ -38,9 +40,3 @@ class Scope:
             args=(return_queue, ))
         routine.start()
         return routine
-=======
-        """
-        Set ups new variables from dictionary.
-        """
-        self.scope.update(variables)
->>>>>>> FETCH_HEAD

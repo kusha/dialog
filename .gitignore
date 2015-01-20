@@ -1,1 +1,4 @@
 __*
+temporary/*
+*.pyc
+nlp_cache.db

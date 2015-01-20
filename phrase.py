@@ -195,6 +195,7 @@ class Phrase:
 
     def __str__(self):
         return self.evaluate()
+<<<<<<< HEAD
 
 # phrase = Phrase("Hello, my name is `name~Mark`", globals())
 # while True:
@@ -224,3 +225,5 @@ class Phrase:
 # It's 400 euros for one bitcoin 45   gghhg pampam word lol
 # {'friendly': False, 'variable_toset': 'literal'}
 # True
+=======
+>>>>>>> FETCH_HEAD

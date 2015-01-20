@@ -1,10 +1,15 @@
 # SIMPLE PHRASES:
-What you can do? \
-Hmmm?
-	I'll report you if i can't do something.
+#My name is `name~John`
+#	Hello, `name`
+#		What is my name?
+#			Your name is `name`
 
-How are you?
-	Fine, thanx
+#What you can do? \
+#Hmmm?
+#	I'll report you if i can't do something.
+
+#How are you?
+#	Fine, thanx
 
 # VARIABLES/FUNCTIONS: `` 
 What time is it?
@@ -13,15 +18,15 @@ What time is it?
 What is your name?
 	My name is `name`.
 
-Fuck you!
+Go away!
 	Why you so angry? `angry:True`
-		Am i angry?
+		I am angry?
 			It is `angry`
 
 # SETTING VARIABLES:
-#You're stupid `angry:True`
-#	I'm not
-#		Sorry `angry:False`
+You're stupid `angry:True`
+	I'm not
+		Sorry `angry:False`
 
 I am angry?
 	`is_angry`
@@ -30,8 +35,8 @@ I am angry?
 #	No problems
 
 #SETTING LIKE VARIABLES:
-My name is `collocutor~Mark`
-	Hello, `collocutor`
+#My name is `collocutor~Mark`
+#	Hello, `collocutor`
 
 #CALLING LONG ACTION
 #Make me a coffee
@@ -87,13 +92,31 @@ What day is it today?
 #		I need to call taxi.
 #			`call_taxi()`
 
-`quality?`
-	poor
-		Sorry, can you reapeat a phrase
-	normal
+#`quality?`
+#	poor
+#		Sorry, can you reapeat a phrase
+#	normal
 
+# Action calling
+# only at Answer level
+make me a coffee
+	okay, i'm going to make you a coffee
+	`make_coffee?`
+		'no water'
+			Really.. it's a problem here
+		'no sugar'
+			Sorry, i haven't a sugar
+				Make without sugar
+					Okay, i'll try
+					`make_wo_sugar?` 
+						True
+							Your coffee is ready
+					But i'm not sure
+		'no water'
+			There is no water
 
-
+Say something
+	Something
 
 
 

@@ -7,32 +7,36 @@ __author__ = "Mark Birger"
 __date__ = "19 Nov 2014"
 
 import re
-from states import Question, Answer
+from states import Question, Answer, Routine, Literal
 
 class Parser:
-    def __init__(self, filename, scope, identation='\t'):
+    def __init__(self, filename, scope, returns, identation='\t'):
+        print("Parsing dialog... ", end="")
         self.scope = scope
+        self.returns = returns
         self.identation = identation
         with open(filename) as dialog_file:
             self.lines = dialog_file.read().splitlines()
-        self.remove_comments()
-        self.remove_whitespaces()
-        self.remove_empty_lines()
-        self.join_lines()
+        self._remove_comments()
+        self._remove_whitespaces()
+        self._remove_empty_lines()
+        self._join_lines()
         self.root = []
         self.stack = []
-        self.parse()
+        self.literals = []
+        self._parse()
+        print("finished")
 
-    def remove_comments(self):
+    def _remove_comments(self):
         self.lines = [re.sub(r'#.*$', '', line) for line in self.lines]
 
-    def remove_whitespaces(self):
+    def _remove_whitespaces(self):
         self.lines = [re.sub(r'\s*$', '', line) for line in self.lines]
 
-    def remove_empty_lines(self):
+    def _remove_empty_lines(self):
         self.lines = [line for line in self.lines if line != '']
 
-    def join_lines(self):
+    def _join_lines(self):
         joined = []
         summary = ""
         for line in self.lines:
@@ -49,24 +53,39 @@ class Parser:
                     summary = ""
         self.lines = joined
 
-    def parse_identations(self, line):
+    def _parse_identations(self, line):
         level = 0
         while line.startswith(self.identation):
             level += 1
             line = line[len(self.identation):]
         return level, line
 
-    def parse(self):
+    def _clean_literals(self, current):
+        stay = []
+        for level in self.literals:
+            if level <= current:
+                stay.append(level)
+        self.literals = stay
+
+    def _parse(self):
         for line in self.lines:
-            level, line = self.parse_identations(line)
+            level, line = self._parse_identations(line)
+            self._clean_literals(level)
             #TODO: routine parsing
             if level % 2 == 0: # it's a question
-                new = Question(line, self.scope)
+                if level in self.literals:
+                    new = Literal(line)
+                else:
+                    new = Question(line, self.scope)
             else:
-                new = Answer(line, self.scope)
-            self.place_state(level, new)
+                if line.startswith('`') and line.endswith('?`'):
+                    new = Routine(line, self.scope, self.returns)
+                    self.literals.append(level+1)
+                else:
+                    new = Answer(line, self.scope)
+            self._place_state(level, new)
 
-    def place_state(self, level, state):
+    def _place_state(self, level, state):
         self.stack = self.stack[:level]
         if not self.stack: # we are at the root
             self.root.append(state)
@@ -78,7 +97,7 @@ class Parser:
     def result(self):
         return self.root
 
-# dlg = Parser("examples/tickets.dlg")
+# dlg = Parser("examples/tickets.dlg", globals(),None)
 
 
 

@@ -7,6 +7,8 @@ __author__ = "Mark Birger"
 __date__ = "18 Nov 2014"
 
 from phrase import Phrase
+import multiprocessing
+import ast
 
 class Question:
     def __init__(self, phrase, scope):
@@ -59,8 +61,57 @@ class Answer:
 
 
 class Routine:
-    def __init__(self):
-        pass
+    def __init__(self, call_line, scope, returns):
+        self.scope = scope
+        self.name = call_line[1:-2]
+        self.childs = []
+        self.returns = returns
+
+    def add(self, literal):
+        self.childs.append(literal)
+
+    def accept(self):
+        # get possible returns
+        cases = [literal.accept() for literal in self.childs]
+        literals, answers = zip(*cases)
+        literals = list(literals)
+        answers = [x[0] for x in list(answers)]
+        # create return way
+        return_queue = self.returns.new_return(answers)
+        # call routine handler
+        def routine_handler(scope, literals, return_queue):
+            # create routine process
+            proc_queue = multiprocessing.Queue(maxsize=0)
+            process = scope.parallel(self.name, proc_queue)
+            # start monitoring
+            while process.is_alive():
+                if not proc_queue.empty():
+                    result = proc_queue.get()
+                    for idx, case in enumerate(literals):
+                        if case == result:
+                            return_queue.put(idx)
+        handler = multiprocessing.Process(
+            target=routine_handler,
+            args=(self.scope, literals, return_queue, ))
+        handler.start()
+        return "", []
+
+    def __str__(self):
+        # TODO: remove this method if it's not called
+        print("WARNING")
+        return ""
+
+class Literal:
+    def __init__(self, value):
+        self.value = ast.literal_eval(value)
+        self.childs = []
+
+    def add(self, answer):
+        self.childs.append(answer)
+
+    def accept(self):
+        # for really, it's pre-accept
+        return self.value, self.childs
 
 # q1 = Question("How do yo do?")
 # a1 = Answer("I'm fine thanx `greetings:True`")

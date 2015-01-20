@@ -54,7 +54,9 @@ Identation defines input or output of the dialog system.
 		Answer1 
 		Answer2
 			...
-	
+
+No matter:	
+
 	# Question calls Answer1 and Answer2
 	# ... is child of Answer1 and Answer2
 	Question
@@ -331,6 +333,10 @@ Example of parsing similar word.
 	[[0 7 2 (Xp)][0 1 0 (Qd)][1 3 1 (I)][1 2 0 (SIp)][3 6 1 (Osn)][3 4 0 (Ox)][5 6 0 (Ds**c)]]
 	[0]
 
+
+Automatic UML generation:
+
+	pyreverse -f 'ALL' -o png dialog.py parser.py states.py scope.py phrase.py link_parser.py speech.py returns.py
 
 
 

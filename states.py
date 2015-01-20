@@ -11,18 +11,30 @@ import multiprocessing
 import ast
 
 class Question:
+    """
+    This class implements question state of dialog.
+    """
     def __init__(self, phrase, scope):
         self.scope = scope
         self.phrase = Phrase(phrase, self.scope)
         self.childs = []
 
     def add(self, answer):
+        """
+        Adds answer to set of answers of this question.
+        """
         self.childs.append(answer)
 
     def compare(self, input_phrase):
+        """
+        Forwards comparison to phrase.
+        """
         return self.phrase.compare(input_phrase)
 
     def accept(self, input_phrase):
+        """
+        Triggers when asked this question.
+        """
         #TODO: probability processing
         self.phrase.accept(input_phrase)
         tosay = []
@@ -37,6 +49,9 @@ class Question:
         return str(self.phrase)
 
 class Answer:
+    """
+    Class represents answer state of dialog.
+    """
     def __init__(self, phrase, scope):
         self.scope = scope
         self.groupid = None
@@ -46,13 +61,22 @@ class Answer:
         self.childs = []
 
     def parse(self, phrase):
+        """
+        Parses probabilities of this answer.
+        """
         #TODO: parsing percents at start of phrase
         return phrase
 
     def add(self, question):
+        """
+        Adds childs questions to this answer state.
+        """
         self.childs.append(question)
 
     def accept(self):
+        """
+        Called when this answer triggered.
+        """
         self.phrase.accept()
         return str(self.phrase), self.childs
 

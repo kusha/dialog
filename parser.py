@@ -126,19 +126,3 @@ class Parser:
         return self.root
 
 # dlg = Parser("examples/tickets.dlg", globals(),None)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-=======
->>>>>>> FETCH_HEAD

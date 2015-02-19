@@ -11,7 +11,6 @@ from states import Question, Answer, Routine, Literal
 
 class Parser:
     def __init__(self, filename, scope, returns, identation='\t'):
-        print("Parsing dialog... ", end="")
         """
         Dialog parser, creates dialog structure from the file.
         """
@@ -28,7 +27,6 @@ class Parser:
         self.stack = []
         self.literals = []
         self._parse()
-        print("finished")
 
     def _remove_comments(self):
         """

@@ -79,6 +79,8 @@ import tornado.websocket
 import tornado.ioloop
 import tornado.web
 
+import time
+
 class WSHandler(tornado.websocket.WebSocketHandler):
     def check_origin(self, origin):
         return True
@@ -113,7 +115,9 @@ class WSHandler(tornado.websocket.WebSocketHandler):
 
     def producer(self):
         while True:
-            self.write_message(self.to_user.get())
+            message = self.to_user.get()
+            time.sleep(1)
+            self.write_message(message)
 
 # class MainHandler(tornado.web.RequestHandler):
 #     def get(self):

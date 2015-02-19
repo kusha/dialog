@@ -32,6 +32,36 @@ pre {
 .row > div {
 	padding-bottom: 20px;
 }
+
 #dialog-interface {
-	min-height: 250px;
+	position: relative;
 }
+#phrase-input {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	border-width: 1px 0 0 0;
+	border-top-color: rgb(221, 221, 221);
+	border-radius: 0px 0px 4px 4px;
+	box-shadow: none;
+}
+blockquote footer:before {
+	content: '';
+}
+.blockquote-reverse footer:after {
+	content: '';
+}
+#dialog-log-trash {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	min-height: 100%;
+	padding-bottom: 34px;
+	padding-left: 15px;
+	padding-right: 15px;
+	padding-top: 15px;
+}
+/*#dialog-log > * {
+	visibility: hidden;
+}*/

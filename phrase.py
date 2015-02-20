@@ -190,7 +190,11 @@ class Phrase:
             for link2 in subs_input:
                 if link1 == link2:
                     similarity += 1
-        similarity = similarity/len(subs_self)
+        # TODO: understand why it is problem here
+        if len(subs_self) != 0:
+            similarity = similarity/len(subs_self)
+        else:
+            similarity = 0
         return similarity
 
     def __str__(self):

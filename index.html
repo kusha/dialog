@@ -52,22 +52,17 @@
 
           <div id="demo" class="row">
             <div class="col-md-12">
-              <h2>Interactive demo</h2>
+              <h2>Interactive demo <small id="update-status"></small></h2>
             </div>
             <div class="col-md-6">
               <p>You can chat with real dialog system online.</p>
             </div>
             <div class="col-md-6">
-              <div id="dialog-interface" class="panel panel-default">
-                <div class="panel-body">
-                  <p id="dialog-log-trash"></p>
-                  <p id="dialog-log">
-                    <!-- <blockquote class="blockquote-reverse">
-                      <p>Turn off the light</p>
-                    </blockquote>
-                    <p class="text-muted text-center"><i>Connected to the server</i></p>
-                    <blockquote><p>OK, i turned off the light</p></blockquote> -->
-                  </p>
+              <div id="dialog-interface">
+                <div class="panel panel-default">
+                  <div class="panel-body">
+                    <p id="dialog-log"></p>
+                  </div>
                 </div>
                 <input id="phrase-input" type="text" class="form-control" placeholder="Type your phrase here" data-toggle="tooltip" data-placement="bottom" title="Press enter to send a message">
               </div>
@@ -84,28 +79,8 @@
 
                 <!-- Tab panes -->
                 <div class="tab-content">
-                  <div role="tabpanel" class="tab-pane active" id="code_python">
-                    <pre>
-                      <code class="python">import re
-  for test_string in ['555-1212', 'ILL-EGAL']:
-      if re.match(r'^\d{3}-\d{4}$', test_string):
-          print test_string, 'is a valid US local phone number'
-      else:
-          print test_string, 'rejected'
-                      </code>
-                    </pre>
-                  </div>
-                  <div role="tabpanel" class="tab-pane" id="code_ddl">
-                    <pre>
-                      <code class="python">import re
-  for test_string in ['555-1212', 'ILL-EGAL']:
-      if re.match(r'^\d{3}-\d{4}$', test_string):
-          print test_string, 'is a valid US local phone number'
-      else:
-          print test_string, 'rejected'
-                      </code>
-                    </pre>
-                  </div>
+                  <div role="tabpanel" class="tab-pane active" id="code_python"></div>
+                  <div role="tabpanel" class="tab-pane" id="code_ddl"></div>
                 </div>
 
               </div>
@@ -146,6 +121,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/languages/python.min.js"></script>
     <script src="js/smooth-scroll.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js"></script>
     <script src="js/script.js"></script>
   </body>
 </html>

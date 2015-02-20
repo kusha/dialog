@@ -1,0 +1,43 @@
+Hello
+Hi
+	Hello
+
+What time is it?
+	A time is `get_time`.
+
+What is your name?
+	My name is `name`
+
+Your name is `name~John`
+	No problems
+
+You're stupid `angry:True`
+	I'm not
+		Sorry `angry:False`
+
+I am angry?
+	`is_angry`
+
+What day is it today?
+	Today is `day_of_week`
+
+My name is `collocutor~John`
+	Hello, `collocutor`
+		What is my name?
+			Your name is `collocutor`
+
+make me a coffee
+	okay, i'm going to make you a coffee
+	`make_coffee?`
+		'no water'
+			Really.. it's a problem here
+		'no sugar'
+			Sorry, i haven't a sugar
+				Make without sugar
+					Okay, i'll try
+					`make_wo_sugar?` 
+						True
+							Your coffee is ready
+					But i'm not sure
+		'no water'
+			There is no water

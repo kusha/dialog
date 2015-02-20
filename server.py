@@ -98,7 +98,7 @@ import time, os.path
 
 class WSHandler(tornado.websocket.WebSocketHandler):
     def check_origin(self, origin):
-        return False
+        return True
 
     def open(self):
         # probably start handlers

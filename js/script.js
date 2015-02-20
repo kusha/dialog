@@ -56,7 +56,7 @@ $(document).ready(function() {
     var dialogDiv = $("#dialog-interface .panel");
     dialogDiv.animate({ scrollTop: dialogDiv.prop("scrollHeight") - dialogDiv.height() }, 500);
   }
-  var socket =  new WebSocket("ws://localhost:8888/api");
+  var socket =  new WebSocket("ws://178.62.192.111/api");
   socket.onopen = function() { 
     dialog_show("Connected to the server", "status", "");
     var data = {

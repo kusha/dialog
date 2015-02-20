@@ -26,7 +26,7 @@ while true; do
 		git pull origin
 		echo "restarting server"
 	    killall python;
-	    python3 server.py &
+	    screen -S dialog_screen -d -m python3 server.py
 	fi;
 
 	sleep 1h; 

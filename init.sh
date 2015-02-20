@@ -1,6 +1,11 @@
 #!/bin/sh
 
-command -v link-parser >/dev/null 2>&1 || { sudo apt-get install link-parser; echo "installing link-parser"; }
+command -v link-parser >/dev/null 2>&1 || { 
+	sudo apt-get update; 
+	sudo apt-get install link-parser python3-setuptools gcc python3.4-dev portaudio19-dev python3-pip; 
+	easy_install pyaudio; 
+	sudo pip3 install tornado; 
+	echo "installing link-grammar"; }
 
 if [ -d .git ]; then
   echo "we are already inside git repo";
@@ -9,7 +14,7 @@ else
 fi;
 
 
-while true; 
+while true; do
 
 	LOCAL=$(git rev-parse @{0})
 	REMOTE=$(git rev-parse @{u})

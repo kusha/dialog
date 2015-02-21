@@ -74,3 +74,19 @@ blockquote footer:before {
 	border-style: dashed;
 	cursor: pointer;
 }
+#code_python pre, #code_ddl pre {
+	height:  400px;
+}
+.loading {
+	position: absolute;
+	width: 100%;
+	left: 0%;
+	text-align: center;
+}
+.loading > div {
+	line-height: 400px;
+}
+.loading > div > .fa {
+	font-size: 30px;
+	color: rgb(221, 221, 221);
+}

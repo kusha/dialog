@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/tomorrow.min.css">
     <link href="css/ddl.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.2.0/animate.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
     <link href="css/style.css" rel="stylesheet">
 
     <!--[if lt IE 9]>
@@ -23,15 +24,21 @@
       <div class="row">
         <div class="col-md-3">
           <ul id="main-menu" class="list-group">
-            <li class="list-group-item">Introduction</li>
+            <a data-scroll href="#intro">
+              <li class="list-group-item">Introduction</li>
+            </a>
             <a data-scroll href="#demo">
               <li class="list-group-item">Demo and examples</li>
             </a>
-            <li class="list-group-item">Conception</li>
-            <li class="list-group-item">Architecture</li>
-            <a data-scroll href="#downloads">
-              <li class="list-group-item">Downloads</li>
+            <a data-scroll href="#howto">
+              <li class="list-group-item">How to use</li>
             </a>
+            <li class="list-group-item">Conception</li>
+            <a data-scroll href="#ddl">
+              <li class="list-group-item">Dilog description language</li>
+            </a>
+            <li class="list-group-item">Architecture</li>
+            <li class="list-group-item">Downloads</li>
             <li class="list-group-item">Documentation</li>
             <li class="list-group-item">Roadmap</li>
             <li class="list-group-item">Credits</li>
@@ -39,15 +46,15 @@
         </div>
         <div class="col-md-9">
 
-          <div class="row">
+          <div id="intro" class="row">
             <div class="col-md-12">
-              <h1>Dialog system <small>for robots</small></h1>
+              <h1>Dialog systems <small>for robots</small></h1>
             </div>
           <!-- </div>
 
           <div class="row"> -->
             <div class="col-md-12">
-              Sed ut perspiciatis, unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam eaque ipsa, quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt, explicabo. Nemo enim ipsam voluptatem, quia voluptas sit, aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos, qui ratione voluptatem sequi nesciunt, neque porro quisquam est, qui dolorem ipsum, quia dolor sit, amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt, ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit, qui in ea voluptate velit esse, quam nihil molestiae consequatur, vel illum, qui dolorem eum fugiat, quo voluptas nulla pariatur? At vero eos et accusamus et iusto odio dignissimos ducimus, qui blanditiis praesentium voluptatum deleniti atque corrupti, quos dolores et quas molestias excepturi sint, obcaecati cupiditate non provident, similique sunt in culpa, qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio, cumque nihil impedit, quo minus id, quod maxime placeat, facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet, ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.
+              This project allows you to create natural interface for human-robot communications. 
             </div>
           </div>
 
@@ -57,6 +64,7 @@
             </div>
             <div class="col-md-6">
               <p>You can chat with real dialog system online.</p>
+              <p>Try to type something from the <a data-scroll href="#code_ddl">dialog description</a>.</p>
             </div>
             <div class="col-md-6">
               <div id="dialog-interface">
@@ -70,7 +78,12 @@
             </div>
           <!-- </div>
           <div class="row"> -->
-            <div class="col-md-8">
+            <div class="col-md-12">
+              <br>
+              <p class="lead">Dialog above is described with this code</p>
+            </div>
+
+            <div class="col-md-9">
               <div role="tabpanel">
 
                 <ul class="nav nav-tabs" role="tablist">
@@ -86,6 +99,15 @@
 
               </div>
             </div>
+            <div class="col-md-3">
+              <br><br>
+              <p>Activity section is regular Python 3 program. It defines robot activities.</p>
+              <p><code>export = globals()</code> defines variable <i>export</i> to global scope.</p>
+              <p>Than dialog manager imports this variable: <code>from main_slave import export</code></p>
+              <p>After all variables and functions are available from the dialog description.</p>   
+              <p>Dialog description section is special markup language, which defines phrases.</p>
+            </div>
+
           </div>
 
 
@@ -108,15 +130,211 @@
             </div> -->
           </div>
 
-          <div class="row">
+          <div id="howto" class="row">
             <div class="col-md-12">
-              Sed ut perspiciatis, unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam eaque ipsa, quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt, explicabo. Nemo enim ipsam voluptatem, quia voluptas sit, aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos, qui ratione voluptatem sequi nesciunt, neque porro quisquam est, qui dolorem ipsum, quia dolor sit, amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt, ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit, qui in ea voluptate velit esse, quam nihil molestiae consequatur, vel illum, qui dolorem eum fugiat, quo voluptas nulla pariatur? At vero eos et accusamus et iusto odio dignissimos ducimus, qui blanditiis praesentium voluptatum deleniti atque corrupti, quos dolores et quas molestias excepturi sint, obcaecati cupiditate non provident, similique sunt in culpa, qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio, cumque nihil impedit, quo minus id, quod maxime placeat, facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet, ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.
+              <h2>How to use</h2>
+            </div>
+            <div class="col-md-12">
+              <p>There are two ways of linking dialog interpreter, activity code and dialog descriptions.</p>
+            </div>
+            <div class="col-md-6">
+              <p class="lead">Activity code is master</p>
+              <pre><code class="python">from dialog import Dialog
+
+# your activities code here
+
+if __name__ == "__main__":
+    DLG = Dialog(globals())
+    DLG.load("example.dlg") # ddl file
+    DLG.interprete()</code></pre><pre><code class="plain">$ ./code.py</code></pre>
+            </div>
+            <div class="col-md-6">
+              <p class="lead">Activity code is slave</p>
+              <pre><code class="python"># your activities code here
+
+export = globals()</code></pre><pre><code class="plain">$ ./interprete code.py desc.dlg</code></pre>
+            </div>
+            <div class="col-md-12">
+              <p class="text-center">Anyway control flow is delegated to the dialog system.</p>
             </div>
           </div>
 
-          <div class="row">
+          <div id="ddl" class="row">
             <div class="col-md-12">
-              Sed ut perspiciatis, unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam eaque ipsa, quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt, explicabo. Nemo enim ipsam voluptatem, quia voluptas sit, aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos, qui ratione voluptatem sequi nesciunt, neque porro quisquam est, qui dolorem ipsum, quia dolor sit, amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt, ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit, qui in ea voluptate velit esse, quam nihil molestiae consequatur, vel illum, qui dolorem eum fugiat, quo voluptas nulla pariatur? At vero eos et accusamus et iusto odio dignissimos ducimus, qui blanditiis praesentium voluptatum deleniti atque corrupti, quos dolores et quas molestias excepturi sint, obcaecati cupiditate non provident, similique sunt in culpa, qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio, cumque nihil impedit, quo minus id, quod maxime placeat, facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet, ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.
+              <h2>Dialog description language <small>ddl</small></h2>
+            </div>
+            <div class="col-md-12">
+              <p><code>*.dlg</code> files describes dialog model.</p>
+            </div>
+            <div class="col-md-12">
+              <p class="lead">Tree structure</p>
+              <p>Identation defines input or output of the dialog system.</p>
+              <p>Default identation is 4 spaces. This can be configured. Always use one type of identations in whole file.</p>
+            </div>
+            <div class="col-md-6">
+              <p>Here is an example:</p>
+              <pre><code class="ddl"># this is a comment
+# white-symbol lines ignored
+
+# identation structure
+Question
+    Answer
+        Question
+            Answer
+
+# few questions at the top level
+Question1
+    Answer1
+Question2
+    Answer2 
+
+# both of these Questions triggers Answer
+Question1
+Question2
+    Answer
+
+# this question calls two Answers
+Question
+    Answer1
+        ...
+    Answer2
+        ...
+
+# Question calls Answer1 and Answer2
+# ... is Answer2 child, Answer1 has no childs
+Question
+    Answer1 
+    Answer2
+        ...</code></pre>
+            </div>
+            <div class="col-md-6">
+              <p>Take a look at these identation errors:</p>
+<pre><code class="ddl"># identation error
+Question
+    Answer
+            Question
+
+# valid structure, but AnswerX is Question1 child
+Question1
+    Answer
+        Question
+            Answer
+#Question2
+    AnswerX
+        Question</code></pre>
+              <p>Answer isn't obligatory at the last level. <i class="text-muted">(Example: you would like to count, how much user speaks "thanx"; just put a setter inside final Question statement).</i></p>
+            </div>
+
+            <div class="col-md-12">
+              <p class="lead">State flow and acceptable questions</p>
+              <p>TODo</p>
+            </div>
+
+            <div class="col-md-12">
+              <p class="lead">Inline data</p>
+              <p><code>`variable_or_function_name`</code></p>
+              <p>You can use variables and function defined in code before sharing the global scope. Or varaibles updated during the interpretation.</p>
+            </div>
+            <div class="col-md-6">
+              <p>Python code, somewhere at the global scope:</p>
+              <pre><code class="python">def btc_rate():
+    rate_eur = get_url_request()
+    return rate_eur
+
+cpu_temp = 54</code></pre>
+            </div>
+            <div class="col-md-6">
+              <p>Dialog code:</p>
+              <pre><code class="ddl">What's the current bitcoin rate?
+    It's `btc_rate` euros for one bitcoin
+
+What is your CPU temperature?
+    temperature is `cpu_temp` degrees
+    unfortunately not below zero</code></pre>
+            </div>
+
+            <div class="col-md-12">
+              <p class="lead">Fixed setters</p>
+              <p><code>`variable_name:Python_literal`</code></p>
+              <p>Can be used anywhere, sets if dialog going thru this phrase. Used in question-leve and answer-level.</p>
+            </div>
+            <div class="col-md-6">
+              <p>Python code, somewhere at the global scope:</p>
+              <pre><code class="python">def look_report():
+    if not friendly:
+        return "You look great, as always"
+    else:
+        return joke("look")</code></pre>
+            </div>
+            <div class="col-md-6">
+              <p>Dialog code:</p>
+              <pre><code class="ddl">You are annoying `friendly:False`
+    Sorry
+
+How i looks like?
+    `look_report`</code></pre>
+            </div>
+
+            <div class="col-md-12">
+              <p class="lead">Flexible setters</p>
+              <p><code>`variable_name~Python_literal`</code></p>
+              <p>Can be used anywhere??! <b>only at the question level</b>, sets if dialog going thru this phrase.</p>
+              <p>Dialog manager uses Link Grammar parser for NLP.</p>
+              <pre><code class="ddl">You are annoying `friendly:False`
+    Sorry
+
+How i looks like?
+    `look_report`</code></pre>
+            </div>
+
+            <div class="col-md-12">
+              <p class="lead">Routine call</p>
+              <p><code>`function_name?`</code></p>
+              <p>Call is only element at the line at answer-level. Values are at question-level. Activity is at answer-level. ANswers are Python literal.</p>
+              <p>This calls aren't locking proceess. They creates Queue, which processed at the same time as user input.</p>
+            </div>
+            <div class="col-md-5">
+              <p>Python code, somewhere at the global scope:</p>
+              <pre><code class="python">def make_coffee(responses):
+    print("routine started")
+    time.sleep(5)
+    responses.put('no sugar')
+
+def make_wo_sugar(responses):
+    time.sleep(4)
+    responses.put(True)</code></pre>
+            </div>
+            <div class="col-md-7">
+              <p>Dialog code:</p>
+              <pre><code class="ddl">make me a coffee
+    okay, i'm going to make you a coffee
+    `make_coffee?`
+        'no water'
+            Really.. it's a problem here
+        'no sugar'
+            Sorry, i haven't a sugar
+                Make without sugar
+                    Okay, i'll try
+                    `make_wo_sugar?` 
+                        True
+                            Your coffee is ready
+                    But i'm not sure
+        'no water'
+            There is no water</code></pre>
+            </div>
+            <div class="col-md-12">
+              <p>Pay attention:</p>
+              <pre><code class="ddl">`function_name`? # it will generate inline call and append ? to the end</code></pre>
+            </div>
+            <!-- <div class="col-md-6">
+              <p>Here is an example:</p>
+              <pre><code class="ddl"></code></pre>
+            </div> -->
+          </div>
+
+          <div id="architecture" class="row">
+            <div class="col-md-12">
+              <h2>Architecture</h2>
             </div>
           </div>
 
@@ -137,6 +355,7 @@
     <script src="js/ddl.js"></script>
     <script src="js/smooth-scroll.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.1/Chart.min.js"></script>
     <script src="js/script.js"></script>
   </body>
 </html>

@@ -1,0 +1,19 @@
+.hljs-question {
+    color: rgb(113, 140, 0);
+}
+
+.hljs-answer {
+    color: rgb(66, 113, 174);
+}
+
+.hljs-setter {
+    color: rgb(137, 89, 168);
+}
+
+.hljs-comment {
+    color: rgb(142, 144, 140);
+}
+
+.hljs-variable {
+    color: rgb(245, 135, 31);
+}

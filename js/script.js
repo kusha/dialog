@@ -92,7 +92,7 @@ $(document).ready(function() {
       data.code.modified = moment(data.code.modified, "x").fromNow();
       data.description.modified = moment(data.description.modified, "x").fromNow();
       $("#code_python").html('<pre><code class="python">'+data.code.content+'</code></pre><p class="text-center text-muted"><i>'+data.code.filename+', last modified '+data.code.modified+'</i></p>');
-      $("#code_ddl").html('<pre><code class="python">'+data.description.content+'</code></pre><p class="text-center text-muted"><i>'+data.description.filename+', last modified '+data.description.modified+'</i></p>');
+      $("#code_ddl").html('<pre><code class="ddl">'+data.description.content+'</code></pre><p class="text-center text-muted"><i>'+data.description.filename+', last modified '+data.description.modified+'</i></p>');
       $('pre code').each(function(i, block) {
         hljs.highlightBlock(block);
       });

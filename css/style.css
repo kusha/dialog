@@ -64,8 +64,10 @@ blockquote footer:before {
 	padding-right: 15px;
 }
 .tab-pane pre {
+	height: auto;
 	max-height: 600px;
-	overflow: auto; 
+	overflow: auto;
+	white-space: pre;
 }
 .ipt-report {
 	border-width: 0 0 1px 0;

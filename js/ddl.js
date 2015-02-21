@@ -8,7 +8,7 @@ hljs.registerLanguage("dlg", function(hljs) {
 
   var LINE_SETTER = {
     className: 'setter',
-    begin: '^\t*\`', end: '\`[ \t]*\n',
+    begin: '^(\t|    )*\`', end: '\`[ \t]*\n',
   };
   var SETTER = {
     className: 'setter',
@@ -16,18 +16,18 @@ hljs.registerLanguage("dlg", function(hljs) {
   };
   var COMMENT = {
     className: 'comment',
-    begin: '#', end: '\n'
+    begin: '([.|\n]|)#', end: '\n'
   };
   var ANSWER = {
     className: 'answer',
-    begin: '(\n|^)\t(\t\t)*((?=(\`|\'\"))|[^\t])', end: '\n',
+    begin: '(\n|^)(\t|    )((\t|    )(\t|    ))*((?=(\`|\'\"))|[^(\t|    )])', end: '\n',
     contains: [
       SETTER
     ]
   };
   var QUESTION = {
     className: 'question',
-    begin: '(\n|^)(\t\t)*((?=(\`|\'\"))|[^\t])', end: '\n',
+    begin: '(\n|^)((\t|    )(\t|    ))*((?=(\`|\'\"))|[^(\t|    )])', end: '\n',
     contains: [
       SETTER
     ]
@@ -35,10 +35,10 @@ hljs.registerLanguage("dlg", function(hljs) {
   var LINE = {
     begin: '', end: '(\n|$)',
     contains: [
+      COMMENT,
       LINE_SETTER,
       ANSWER,
-      QUESTION,
-      COMMENT
+      QUESTION
     ]
   }
   return {

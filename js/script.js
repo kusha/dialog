@@ -1,5 +1,6 @@
 $(document).ready(function() {
   smoothScroll.init();
+  hljs.initHighlightingOnLoad();
   $('[data-toggle="tooltip"]').tooltip();
   smoothScroll.init({
     speed: 500,

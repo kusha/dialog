@@ -1,12 +1,21 @@
 body {
 	-webkit-font-smoothing: antialiased;
 	font-weight: lighter;
+	/* font-family: proxima-nova, 'Helvetica Neue', Helvetica, sans-serif; */
 	font-family: Roboto, Verdana, sans-serif;
 	padding-top: 50px;
 }
 #main-menu {
 	padding-top: 20px;
 	position:fixed;
+}
+@media screen and (max-width: 992px) {
+	body {
+		padding-top: 0px
+	}
+	#main-menu {
+		display: none;
+	}
 }
 #main-menu li {
 	margin: 5px 0;

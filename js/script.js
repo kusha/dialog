@@ -14,26 +14,6 @@ $(document).ready(function() {
     $("#main-menu").css("margin-top", Math.max(0, 250 - $(this).scrollTop()));
   });
 
-  // function dialog_clean(elements) {
-  //   faders = elements.clone();
-  //   elements.css('visibility', 'hidden');
-  //   elements.css('max-height', '0');
-  //   setTimeout(function() { elements.remove() }, 500);
-  //   // elements.animate({height: 0}, { "duration": 200, "easing": "linear", "complete": function () {
-  //   //   elements.remove();
-  //   // }});
-  //   faders.removeClass('animated fadeInUp fadeInRight fadeInLeft');
-  //   // setTimeout(function() {
-  //   //   $(faders.get().reverse()).prependTo("#dialog-log-trash");
-  //   // }, 1000);
-  //   faders.prependTo("#dialog-log-trash");
-  //   faders.addClass('animated fadeOutUp');
-  //   faders.one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
-  //     // console.log($(this).text());
-  //     $(this).remove();
-  //   });
-  // }
-
   function dialog_show(text, style, footer) {
     var log = $("#dialog-log");
     switch (style) {

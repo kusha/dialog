@@ -118,6 +118,17 @@ make me a coffee
 Say something
 	Something
 
+what is new
+	`update_news?`
+		'checkout'
+			wait a second, i need to checkout sources
+		'updated'
+			i'm ready
+		'ready'
+			`read_news`
+				read more
+					`current`
+
 
 
 

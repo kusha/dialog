@@ -41,6 +41,33 @@ def make_wo_sugar(responses):
     time.sleep(4)
     responses.put(True)
 
+# news reader
+import feedparser, re, random, html.parser
+html_parser = html.parser.HTMLParser()
+news = {}
+feedparser._HTMLSanitizer.acceptable_elements = set()
+def update_news(responses):
+    if not news:
+        responses.put('checkout')
+        result = feedparser.parse("http://techcrunch.com/feed/")
+        for entry in result['entries']:
+            entry['summary'] = re.sub('<img[^>]*>', '', entry['summary'])
+            entry['summary'] = re.sub('<a.*</a>', '', entry['summary'])
+            entry['summary'] = html_parser.unescape(entry['summary'])
+            news[entry['title']] = entry['summary']
+        responses.put('updated')
+    else:
+        responses.put('ready')
+
+current = None
+def read_news():
+    try:
+        selected = random.choice(list(news.keys()))
+    except IndexError:
+        return "I'm not ready to read news yet" #random choice fix
+    current = news[selected]
+    return selected
+
 if __name__ == "__main__":
     DLG = Dialog(globals())
     DLG.load("examples/tickets.dlg")

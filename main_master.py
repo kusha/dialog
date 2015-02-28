@@ -44,4 +44,4 @@ def make_wo_sugar(responses):
 if __name__ == "__main__":
     DLG = Dialog(globals())
     DLG.load("examples/tickets.dlg")
-    DLG.start()
+    DLG.start_text()

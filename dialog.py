@@ -32,16 +32,16 @@ class Dialog:
         self.expected.extend(parser.result())
 
     def _extend_expected(self, quesitons):
-         # TODO: more elegant way to extends expected questions
+        # TODO: more elegant way to extends expected questions
         expected_strings = [str(x) for x in self.expected]
         for new in quesitons:
             if not str(new) in expected_strings:
                 print("+\t%s"%(new))
                 self.expected.append(new)
 
-    def start(self):
+    def start_spoken(self):
         """
-        Interprets dialog
+        Interprets dialog with natural speech.
         """
         occupation = multiprocessing.Event()
         listener_queue = multiprocessing.Queue(maxsize=0)
@@ -57,8 +57,8 @@ class Dialog:
             target=speech.listener,
             args=(occupation, recognizer_queue, ))
         speaker.start()
-        # recognizer.start() # IN CASE OF SPEECH RECOGNITION
-        # listener.start()   # IN CASE OF SPEECH RECOGNITION
+        recognizer.start()
+        listener.start()
         occupation.set()
         print("======")
         for state in self.expected:
@@ -73,8 +73,46 @@ class Dialog:
                 print("Bot> "+tosay)
                 self._extend_expected(questions)
             # process input
-            input_phrase = input("You> ") # IN CASE OF TEXT MODE
-            # input_phrase = listener_queue.get() # IN CASE OF SPEECH RECOGNITION
+            if not listener_queue.empty():
+                input_phrase = listener_queue.get()
+                input_phrase = link_parser.parse(input_phrase)
+                states_probability = []
+                for state in self.expected:
+                    # print(state, state.compare(input_phrase))
+                    states_probability.append((state, state.compare(input_phrase)))
+                states_probability = sorted(states_probability, key=lambda x: x[1], reverse=True)
+                print("======")
+                for state in states_probability:
+                    print("%.2f\t%s" % (state[1], state[0]))
+                print("======")
+                state = states_probability[0][0]
+                if states_probability[0][1] < 0.2:
+                    print("Bot> ???")
+                else:
+                    tosay, questions = state.accept(input_phrase)
+                    for answer in tosay:
+                        if answer != "":
+                            speaker_queue.put(answer)
+                            print("Bot> "+answer)
+                    self._extend_expected(questions)
+
+    def start_text(self):
+        """
+        Interprets dialog in text mode.
+        """
+        print("======")
+        for state in self.expected:
+            print("\t%s" % (state))
+        print("======")
+        while True:
+            # process routines answers
+            answers = self.returns.get_returns()
+            for answer in answers:
+                tosay, questions = answer.accept()
+                print("Bot> "+tosay)
+                self._extend_expected(questions)
+            # process input
+            input_phrase = input("You> ")
             input_phrase = link_parser.parse(input_phrase)
             states_probability = []
             for state in self.expected:
@@ -92,7 +130,6 @@ class Dialog:
                 tosay, questions = state.accept(input_phrase)
                 for answer in tosay:
                     if answer != "":
-                        speaker_queue.put(answer)
                         print("Bot> "+answer)
                 self._extend_expected(questions)
 

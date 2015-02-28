@@ -20,7 +20,7 @@ def speaker(occupation, tosay):
     while True:
         # TODO: save phrases for later usage
         text = tosay.get()
-        url = 'http://www.translate.google.com/translate_tts?tl=en&q='
+        url = 'http://translate.google.com/translate_tts?tl=en&q='
         url += quote(text)
         req = urllib.request.Request(
             url, 

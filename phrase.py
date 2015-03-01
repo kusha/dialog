@@ -67,6 +67,24 @@ class Phrase:
         # 2. checks pronouncable symbol sets
         pass
 
+    def _shift_other(self, shifter, length):
+        for subs in self.substitute:
+            if subs[1] > shifter[3]:
+                subs[1] = subs[1] - length
+                subs[2] = subs[2] - length
+        for fixed_setter in self.setters:
+            if fixed_setter[2] > shifter[3]:
+                fixed_setter[2] = fixed_setter[2] - length
+                fixed_setter[3] = fixed_setter[3] - length
+        for next_setter in self.flexibles:
+            if next_setter[2] > shifter[3]:
+                next_setter[2] = next_setter[2] - length
+                next_setter[3] = next_setter[3] - length
+        for request in self.requests:
+            if request[2] > shifter[3]:
+                request[2] = request[2] - length
+                request[3] = request[3] - length
+
     def _create_substition(self, name, pos1, pos2):
         """
         Adds variables substitutions to list.
@@ -82,22 +100,11 @@ class Phrase:
     def _erase_fixed_setters(self):
         """
         Erase fixed setters from phrase.
-        Shifts another setters and subnstitutions.
+        Shifts another setters and substitutions.
         """
         for setter in self.setters:
             length = setter[3] - setter[2]
-            for subs in self.substitute:
-                if subs[1] > setter[3]:
-                    subs[1] = subs[1] - length
-                    subs[2] = subs[2] - length
-            for next_setter in self.setters:
-                if next_setter[2] > setter[3]:
-                    next_setter[2] = next_setter[2] - length
-                    next_setter[3] = next_setter[3] - length
-            for flex_setter in self.flexibles:
-                if flex_setter[2] > setter[3]:
-                    flex_setter[2] = flex_setter[2] - length
-                    flex_setter[3] = flex_setter[3] - length
+            self._shift_other(setter, length)
             self.phrase = self.phrase[:setter[2]] + self.phrase[setter[3]:]
     
     def _create_flexible_setter(self, name, word, pos1, pos2):
@@ -113,18 +120,7 @@ class Phrase:
         """
         for setter in self.flexibles:
             length = setter[3] - setter[2] - len(setter[1])
-            for subs in self.substitute:
-                if subs[1] > setter[3]:
-                    subs[1] = subs[1] - length
-                    subs[2] = subs[2] - length
-            for fixed_setter in self.setters:
-                if fixed_setter[2] > setter[3]:
-                    fixed_setter[2] = fixed_setter[2] - length
-                    fixed_setter[3] = fixed_setter[3] - length
-            for next_setter in self.flexibles:
-                if next_setter[2] > setter[3]:
-                    next_setter[2] = next_setter[2] - length
-                    next_setter[3] = next_setter[3] - length
+            self._shift_other(setter, length)
             self.phrase = self.phrase[:setter[2]] + setter[1] \
                 + self.phrase[setter[3]:]
             setter[3] = setter[3] - length

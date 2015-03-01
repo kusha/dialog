@@ -25,6 +25,7 @@ class Phrase:
         self.substitute = []
         self.setters = []
         self.flexibles = []
+        self.requests = []
         self._parse()
         self._validate()
         self.latest = None
@@ -34,7 +35,7 @@ class Phrase:
         """
         Parses input string using regex.
         """
-        pattern = re.compile(r'`([a-zA-Z0-9_]*)((\:|\~)([^`]+))?`')
+        pattern = re.compile(r'`([a-zA-Z0-9_]*)((\:|\~|\<)([^`]+))?`')
         for inline in pattern.finditer(self.origin):
             if bool(inline.group(2)):
                 if inline.group(3) == ':':
@@ -47,10 +48,16 @@ class Phrase:
                         inline.group(1),
                         inline.group(4),
                         *inline.span())
+                elif inline.group(3) == '<':
+                    self._create_routine_request(
+                        inline.group(1),
+                        inline.group(4),
+                        *inline.span())
             else:
                 self._create_substition(inline.group(1), *inline.span())
         self._erase_fixed_setters()
         self._erase_flexible_setters()
+        self._erase_routine_requests()
         try:
             self.latest = self.evaluate()
             self.parsed = link_parser.parse(self.latest)
@@ -135,6 +142,15 @@ class Phrase:
                 if word.startswith(setter[1]):
                     setter[4] = idx
 
+    def _create_routine_request(self, name, value, pos1, pos2):
+        self.requests.append([name, value, pos1, pos2])
+
+    def _erase_routine_requests(self):
+        for request in self.requests:
+            length = request[3] - request[2]
+            self._shift_other(request, length)
+            self.phrase = self.phrase[:request[2]] + self.phrase[request[3]:]
+
     def evaluate(self):
         """
         Returns string with all substitutions.
@@ -173,6 +189,8 @@ class Phrase:
                 val = link_parser.extract(setter[4], self.parsed, input_phrase)
                 toset[setter[0]] = val
         self.scope.set(toset)
+        for request in self.requests:
+            self.scope.send(request[0], ast.literal_eval(request[1]))
 
     def compare(self, input_phrase):
         """

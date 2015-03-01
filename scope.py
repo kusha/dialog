@@ -18,6 +18,7 @@ class Scope:
         for name, obj in scope.items():
             if not name.startswith('__') and name != "Dialog":
                 self.scope[name] = obj
+        self.routines = {}
 
     def get(self, name):
         """
@@ -35,8 +36,45 @@ class Scope:
         self.scope.update(variables)
 
     def parallel(self, name, return_queue):
+        """
+        Calls one-way routine, asynchroniously.
+        """
         routine = multiprocessing.Process(
             target=self.scope[name],
             args=(return_queue, ))
         routine.start()
         return routine
+
+    def parallel2(self, name, requests_queue, return_queue):
+        """
+        Calls two-way routine, asynchroniously.
+        """
+        routine = multiprocessing.Process(
+            target=self.scope[name],
+            args=(requests_queue, return_queue, self.scope, ))
+        routine.start()
+        self.routines[name] = {
+            "process" : routine,
+            "requests": requests_queue, 
+        }
+        return routine
+
+    def send(self, name, value):
+        """
+        Send value to existing two-way routine.
+        """
+        to_delete = []
+        if name in self.routines:
+            if self.routines[name]["process"].is_alive():
+                self.routines[name]["requests"].put(value)
+            else:
+                to_delete.append(name)
+        else:
+            pass
+            #TODO: create error raising
+        for each in to_delete:
+            del self.processes[each]
+
+
+
+

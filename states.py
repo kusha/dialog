@@ -125,6 +125,39 @@ class Routine:
         print("WARNING")
         return ""
 
+class Routine2:
+    def __init__(self, call_line, scope, returns):
+        self.scope = scope
+        self.name = call_line[1:-3]
+        self.quesions = [] # question childs
+        self.literals = [] # literal childs
+        self.returns = returns
+
+    def add(self, state):
+        # incase of Routine2 sorting content
+        if isinstance(state, Question):
+            self.quesions.append(state)
+        elif isinstance(state, Literal2):
+            self.literals.append(state)
+
+    def accept(self):
+        # get possible returns
+        cases = [literal.accept() for literal in self.literals]
+        literals, answers = zip(*cases)
+        literals = list(literals)
+        answers = [x[0] for x in list(answers)]
+        cases = [literals, answers]
+        # initialize i/o queues
+        requests_queue = multiprocessing.Queue(maxsize=0)
+        responses_queue = multiprocessing.Queue(maxsize=0)
+        process = self.scope.parallel2(self.name, \
+            requests_queue, responses_queue)
+        # register routine
+        self.returns.new_routine(process, self.name, \
+            requests_queue, (cases, responses_queue))
+        # return childs questions
+        return "", self.quesions
+
 class Literal:
     def __init__(self, value):
         self.value = ast.literal_eval(value)
@@ -136,6 +169,12 @@ class Literal:
     def accept(self):
         # for really, it's pre-accept
         return self.value, self.childs
+
+class Literal2(Literal):
+    def __init__(self, value):
+        value = value[1:]
+        super(Literal2, self).__init__(value)
+
 
 # q1 = Question("How do yo do?")
 # a1 = Answer("I'm fine thanx `greetings:True`")

@@ -7,7 +7,7 @@ __author__ = "Mark Birger"
 __date__ = "19 Nov 2014"
 
 import re
-from states import Question, Answer, Routine, Literal
+from states import Question, Answer, Routine, Literal, Literal2, Routine2
 
 class Parser:
     def __init__(self, filename, scope, returns, identation='\t'):
@@ -25,7 +25,8 @@ class Parser:
         self._join_lines()
         self.root = []
         self.stack = []
-        self.literals = []
+        self.literals = [] # levels where literal expected
+        self.literals2 = []
         self._parse()
 
     def _remove_comments(self):
@@ -78,11 +79,20 @@ class Parser:
         return level, line
 
     def _clean_literals(self, current):
+        """
+        Method wipes old literal levels.
+        """
         stay = []
-        for level in self.literals:
+        for level in self.literals: 
             if level <= current:
                 stay.append(level)
         self.literals = stay
+        # TODO: solve this (one/two way syntax difference antoher way)
+        stay = []
+        for level in self.literals2: 
+            if level <= current:
+                stay.append(level)
+        self.literals2 = stay
 
     def _parse(self):
         """
@@ -93,7 +103,9 @@ class Parser:
             self._clean_literals(level)
             #TODO: routine parsing
             if level % 2 == 0: # it's a question
-                if level in self.literals:
+                if level in self.literals2 and line.startswith('>'):
+                    new = Literal2(line)
+                elif level in self.literals:
                     new = Literal(line)
                 else:
                     new = Question(line, self.scope)
@@ -101,6 +113,9 @@ class Parser:
                 if line.startswith('`') and line.endswith('?`'):
                     new = Routine(line, self.scope, self.returns)
                     self.literals.append(level+1)
+                elif line.startswith('`') and line.endswith('?!`'):
+                    new = Routine2(line, self.scope, self.returns)
+                    self.literals2.append(level+1)
                 else:
                     new = Answer(line, self.scope)
             self._place_state(level, new)

@@ -32,6 +32,9 @@ class Dialog:
         self.expected.extend(parser.result())
 
     def _extend_expected(self, quesitons):
+        """
+        Method extends set of expected phrases.
+        """
         # TODO: more elegant way to extends expected questions
         expected_strings = [str(x) for x in self.expected]
         for new in quesitons:
@@ -133,3 +136,31 @@ class Dialog:
                         print("Bot> "+answer)
                 self._extend_expected(questions)
 
+def handle(callbacks, before=lambda scope: None, after=lambda scope: None):
+    def decorator(async_func):
+        def inner(requests, responses, global_scope):
+            initial_scope = {}
+            for name, obj in global_scope.items():
+                if not name.startswith('__'):
+                    initial_scope[name] = obj
+            scope = type('', (), initial_scope)()
+            before(scope)
+            while True:
+                while not requests.empty():
+                    request = requests.get()
+                    if request in callbacks:
+                        callbacks[request](scope)
+                    else:
+                        print("Warining: unhandled request")
+                        if "" in callbacks:
+                            callbacks[""](scope)
+                        else:
+                            pass
+                if scope._exit:
+                    break
+                async_func(requests, responses, scope)
+                if scope._exit:
+                    break
+            after(scope)
+        return inner
+    return decorator

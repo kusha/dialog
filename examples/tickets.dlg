@@ -129,6 +129,22 @@ what is new
 				read more
 					`current`
 
+come to me
+	okay i'm moving to you
+	`movement?!`
+		>'half'
+			i'm already at the half
+			say something right now
+		>'finished'
+			i just near to you
+		>'reverted'
+			i'm at my previous position
+		hey stop
+			`movement<` "stop"
+		you can continue
+			`movement<` "continue"
+		go back
+			`movement<` "back"
 
 
 

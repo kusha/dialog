@@ -6,7 +6,7 @@ Example of dialog manager usage.
 """
 
 
-from dialog import Dialog
+from dialog import Dialog, handle
 
 import datetime, time
 
@@ -40,6 +40,56 @@ def make_coffee(responses):
 def make_wo_sugar(responses):
     time.sleep(4)
     responses.put(True)
+
+# two-way activity
+i = 10
+
+def fucnt():
+    i = 11
+    return i
+
+# functions definition
+def stop_movement(scope):
+    scope.stop_flag = True
+    print("*stop movement*")
+
+def continue_movement(scope):
+    scope.stop_flag = False
+    print("*continuing movement*")
+
+def revert_movement(scope):
+    scope.step = -1
+    print("*move back*")
+
+callbacks = {
+    "stop": stop_movement,
+    "continue": continue_movement,
+    "back": revert_movement,
+}
+
+def before(scope):
+    scope.pos = 0
+    scope.step = 1
+    print("*calculating trajectory*")
+
+def after(scope):
+    print("*disabling motors*")
+
+@handle(callbacks, before=before, after=after)
+def movement(requests, responses, scope):
+    if not scope.stop_flag:
+        time.sleep(2)
+        scope.pos += scope.step
+        if scope.pos == 5:
+            responses.put("half")
+        elif scope.pos == 10:
+            responses.put("finished")
+            scope._exit = True
+        elif scope.pos == 0:
+            responses.put("reverted")
+            scope._exit = True
+    else:
+        print("*do nothing*")
 
 # news reader
 import feedparser, re, random, html.parser

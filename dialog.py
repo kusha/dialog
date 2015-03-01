@@ -156,10 +156,10 @@ def handle(callbacks, before=lambda scope: None, after=lambda scope: None):
                             callbacks[""](scope)
                         else:
                             pass
-                if scope._exit:
+                if hasattr(scope, '_exit') and scope._exit:
                     break
                 async_func(requests, responses, scope)
-                if scope._exit:
+                if hasattr(scope, '_exit') and scope._exit:
                     break
             after(scope)
         return inner

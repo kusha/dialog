@@ -139,12 +139,14 @@ come to me
 			i just near to you
 		>'reverted'
 			i'm at my previous position
+				good boy
+					thank you
 		hey stop
-			`movement<` "stop"
+			okay `movement<"stop"` 
 		you can continue
-			`movement<` "continue"
+			okay `movement<"continue"`
 		go back
-			`movement<` "back"
+			okay `movement<"back"`
 
 
 

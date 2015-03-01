@@ -58,6 +58,7 @@ def continue_movement(scope):
     print("*continuing movement*")
 
 def revert_movement(scope):
+    scope.stop_flag = False
     scope.step = -1
     print("*move back*")
 
@@ -68,6 +69,7 @@ callbacks = {
 }
 
 def before(scope):
+    scope.stop_flag = False
     scope.pos = 0
     scope.step = 1
     print("*calculating trajectory*")
@@ -88,7 +90,9 @@ def movement(requests, responses, scope):
         elif scope.pos == 0:
             responses.put("reverted")
             scope._exit = True
+        print("*my pos is %s*", scope.pos)
     else:
+        time.sleep(2)
         print("*do nothing*")
 
 # news reader
@@ -121,4 +125,4 @@ def read_news():
 if __name__ == "__main__":
     DLG = Dialog(globals())
     DLG.load("examples/tickets.dlg")
-    DLG.start_text()
+    DLG.start_spoken()

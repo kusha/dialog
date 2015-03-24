@@ -41,3 +41,23 @@ make me a coffee
 					But i'm not sure
 		'no water'
 			There is no water
+
+count
+	okay let's count
+	i do like to count with 7 step
+	`count?!`
+		>'half'
+			i't is quite large number
+		>'finished'
+			i'm done
+		>'reverted'
+			i'm at zero
+			this calculations has no meaning
+		>'counted'
+			42 is good choice to stop
+		stop
+			okay `count<"stop"` 
+		continue
+			okay `count<"continue"`
+		countdown
+			okay `count<"back"`

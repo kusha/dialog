@@ -37,7 +37,7 @@ class Scope:
 
     def parallel(self, name, return_queue):
         """
-        Calls one-way routine, asynchroniously.
+        Calls simplex routine, asynchroniously.
         """
         routine = multiprocessing.Process(
             target=self.scope[name],
@@ -47,7 +47,7 @@ class Scope:
 
     def parallel2(self, name, requests_queue, return_queue):
         """
-        Calls two-way routine, asynchroniously.
+        Calls duplex routine, asynchroniously.
         """
         routine = multiprocessing.Process(
             target=self.scope[name],
@@ -61,7 +61,7 @@ class Scope:
 
     def send(self, name, value):
         """
-        Send value to existing two-way routine.
+        Send value to existing duplex routine.
         """
         to_delete = []
         if name in self.routines:
@@ -74,7 +74,3 @@ class Scope:
             #TODO: create error raising
         for each in to_delete:
             del self.processes[each]
-
-
-
-

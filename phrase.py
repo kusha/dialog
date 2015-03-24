@@ -69,12 +69,15 @@ class Phrase:
         """
         Validates, that all charactes in phrase pronouncable.
         """
-        #TODO: create phrase validation
+        # TODO: create phrase validation
         # 1. removes all substitutions
         # 2. checks pronouncable symbol sets
         pass
 
     def _shift_other(self, shifter, length):
+        """
+        Shifts all later setter backwards.
+        """
         for subs in self.substitute:
             if subs[1] > shifter[3]:
                 subs[1] = subs[1] - length
@@ -143,9 +146,15 @@ class Phrase:
                     setter[4] = idx
 
     def _create_routine_request(self, name, value, pos1, pos2):
+        """
+        Adds routine creator to tlist.
+        """
         self.requests.append([name, value, pos1, pos2])
 
     def _erase_routine_requests(self):
+        """
+        Erases all routines requests. Shifts any other setters.
+        """
         for request in self.requests:
             length = request[3] - request[2]
             self._shift_other(request, length)
@@ -165,7 +174,11 @@ class Phrase:
         return tmp
 
     def _update_parsed(self):
-        #TODO: NO MEANING, need to optimize
+        """
+        Method evaulates string and if it's changed, 
+        parses the new one with link-parser.
+        """
+        # TODO: probably add check for changed vaules before eval
         try:
             if self.evaluate() != self.latest:
                 self.latest = self.evaluate()
@@ -213,32 +226,3 @@ class Phrase:
 
     def __str__(self):
         return self.evaluate()
-
-# phrase = Phrase("Hello, my name is `name~Mark`", globals())
-# while True:
-#     inp = input()
-#     # phrase.compare(inp)
-#     phrase.accept(input_phrase=inp)
-# btc_rate = 400
-# cpu_temp = 45
-# okaa = "pampam"
-
-# phrase = Phrase("It's `btc_rate` euros for one bitcoin `cpu_temp` `variable_toset:\"literal\"` `friendly:False` gghhg `okaa` `variable_name~word` lol", globals())
-# print(phrase)
-# print(phrase.evaluate())
-# print(phrase.accept())
-# print(phrase.compare("It's 400 euros for one bitcoin 45   gghhg pampam word lol"))
-
-# OUTPUT:
-
-# It's `btc_rate` euros for one bitcoin `cpu_temp`   gghhg `okaa`
-# word
-#  lol
-# It's `btc_rate` euros for one bitcoin `cpu_temp`   gghhg `okaa` word lol
-# [['btc_rate', 5, 15], ['cpu_temp', 38, 48], ['okaa', 57, 63]]
-# [['variable_toset', '"literal"', 49, 75], ['friendly', 'False', 50, 66]]
-# [['variable_name', 'word', 64, 68]]
-# It's 400 euros for one bitcoin 45   gghhg pampam word lol
-# It's 400 euros for one bitcoin 45   gghhg pampam word lol
-# {'friendly': False, 'variable_toset': 'literal'}
-# True

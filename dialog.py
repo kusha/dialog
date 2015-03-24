@@ -137,8 +137,19 @@ class Dialog:
                 self._extend_expected(questions)
 
 def handle(callbacks, before=lambda scope: None, after=lambda scope: None):
+    """
+    Decorator wrapper, which wraps duplex routine.
+    Recives decorator params (callbacks).
+    """
     def decorator(async_func):
+        """
+        Decorator, which recieves duplex routine function.
+        """
         def inner(requests, responses, global_scope):
+            """
+            Resulting function, with changed behavior.
+            Called by dialog system.
+            """
             initial_scope = {}
             for name, obj in global_scope.items():
                 if not name.startswith('__'):
@@ -156,6 +167,7 @@ def handle(callbacks, before=lambda scope: None, after=lambda scope: None):
                             callbacks[""](scope)
                         else:
                             pass
+                # TODO: is it good way to finish routine?
                 if hasattr(scope, '_exit') and scope._exit:
                     break
                 async_func(requests, responses, scope)

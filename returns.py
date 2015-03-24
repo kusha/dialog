@@ -9,6 +9,9 @@ __date__ = "20 Jan 2015"
 import multiprocessing
 
 class Returns:
+    """
+    Class manages routines.
+    """
     def __init__(self):
         self.routines = []
         self.processes = {}
@@ -48,11 +51,13 @@ class Returns:
             del self.processes[each]
         return answers
 
-
-    def new_routine(self, process, name, requests_queue, responses):
-        self.processes[name] = {
-            "process": process,
-            "requests_queue": requests_queue, #TODO: remove, unused, realised with Scope module
-            "cases": responses[0],
-            "responses_queue": responses[1],
-        }
+    # def new_routine(self, process, name, requests_queue, responses):
+    #     """
+    #     Adds new routine to the list.
+    #     """
+    #     self.processes[name] = {
+    #         "process": process,
+    #         "requests_queue": requests_queue, #TODO: remove, unused, realised with Scope module
+    #         "cases": responses[0],
+    #         "responses_queue": responses[1],
+    #     }

@@ -137,5 +137,3 @@ class Parser:
         Returns top-level questions set.
         """
         return self.root
-
-# dlg = Parser("examples/tickets.dlg", globals(),None)

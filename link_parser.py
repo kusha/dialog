@@ -58,6 +58,9 @@ def word_links(idx, sentence):
     return important    
 
 def extract(idx, sentence1, sentence2):
+    """
+    Extracts word from sentence with similar structure.
+    """
     important = word_links(idx, sentence1)
     for word in range(len(sentence2["words"])):
         links = word_links(word, sentence2)
@@ -78,12 +81,10 @@ def substitute(sentence):
         result.append([first, second, link[2]])
     return result
 
-
-
 # s1 = parse("What is your mark, Mark")
 # print(s1["words"])
 # print(s1["links"])
-# s2 = parse("What is your mark, Pavel")
+# s2 = parse("What is your mark, John")
 # print(s2["words"])
 # print(s2["links"])
 # print()

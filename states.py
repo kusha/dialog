@@ -85,6 +85,9 @@ class Answer:
 
 
 class Routine:
+    """
+    Class represents simplex routine call state.
+    """
     def __init__(self, call_line, scope, returns):
         self.scope = scope
         self.name = call_line[1:-2]
@@ -92,9 +95,15 @@ class Routine:
         self.returns = returns
 
     def add(self, literal):
+        """
+        Adds response literal.
+        """
         self.childs.append(literal)
 
     def accept(self):
+        """
+        Method runs new routine in another process.
+        """
         # get possible returns
         cases = [literal.accept() for literal in self.childs]
         literals, answers = zip(*cases)
@@ -120,12 +129,15 @@ class Routine:
         handler.start()
         return "", []
 
-    def __str__(self):
-        # TODO: remove this method if it's not called
-        print("WARNING")
-        return ""
+    # def __str__(self):
+    #     # TODO: remove this method if it's not called
+    #     print("WARNING")
+    #     return ""
 
 class Routine2:
+    """
+    Class implements duplex routine state.
+    """
     def __init__(self, call_line, scope, returns):
         self.scope = scope
         self.name = call_line[1:-3]
@@ -134,13 +146,19 @@ class Routine2:
         self.returns = returns
 
     def add(self, state):
+        """
+        Adds child literals or questions.
+        """
         # incase of Routine2 sorting content
         if isinstance(state, Question):
             self.quesions.append(state)
         elif isinstance(state, Literal2):
             self.literals.append(state)
-
+            
     def accept(self):
+        """
+        Method runs new duplex routine in another process.
+        """
         # get possible returns
         cases = [literal.accept() for literal in self.literals]
         literals, answers = zip(*cases)
@@ -159,24 +177,34 @@ class Routine2:
         return "", self.quesions
 
 class Literal:
+    """
+    This class implements literal state.
+    Used as routine child.
+    """
     def __init__(self, value):
         self.value = ast.literal_eval(value)
         self.childs = []
 
     def add(self, answer):
+        """
+        Answer is spoken at the routine callback.
+        Adds answer to the literal childs set.
+        """
         self.childs.append(answer)
 
     def accept(self):
+        """
+        Returns literal with it's childs.
+        Called at routine start, monitored by returns module.
+        """
         # for really, it's pre-accept
         return self.value, self.childs
 
 class Literal2(Literal):
+    """
+    This class overrides constructor because of
+    the syntax difference of simplex and suplex routines.
+    """
     def __init__(self, value):
         value = value[1:]
         super(Literal2, self).__init__(value)
-
-
-# q1 = Question("How do yo do?")
-# a1 = Answer("I'm fine thanx `greetings:True`")
-# q1.add(a1)
-# print(q1.accept(input("You> ")))

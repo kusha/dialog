@@ -13,6 +13,7 @@ import speech
 import link_parser
 
 import multiprocessing
+import sys
 
 class Dialog:
     """
@@ -41,6 +42,20 @@ class Dialog:
             if not str(new) in expected_strings:
                 print("+\t%s"%(new))
                 self.expected.append(new)
+
+    def start(self):
+        """
+        Text/spoken mode select method.
+        """
+        if len(sys.argv) > 1:
+            if sys.argv[1] == "-t":
+                return self.start_text()
+            elif sys.argv[1] == "-s":
+                return self.start_spoken()
+        else:
+            print("Dialog system started in text mode by deafult.")
+            print("Use -s option to run spoken mode.")
+            return self.start_text()
 
     def start_spoken(self):
         """
@@ -116,6 +131,9 @@ class Dialog:
                 self._extend_expected(questions)
             # process input
             input_phrase = input("You> ")
+            while not input_phrase.strip():
+                print("Empty input string")
+                input_phrase = input("You> ")
             input_phrase = link_parser.parse(input_phrase)
             states_probability = []
             for state in self.expected:

@@ -44,6 +44,8 @@ def make_wo_sugar(responses):
 
 # duplex routine
 
+value = 0
+
 def stop_count(scope):
     scope.stop_flag = True
 
@@ -66,20 +68,24 @@ def before(scope):
     scope.step = 7
 
 def after(scope):
-    responses.put("finished")
+    pass
 
 @handle(callbacks, before=before, after=after)
 def count(requests, responses, scope):
     if not scope.stop_flag:
         time.sleep(2)
         scope.pos += scope.step
+        value = scope.pos
+        responses.put("report")
         if scope.pos == 21 and scope.step > 0:
             responses.put("half")
         elif scope.pos == 42:
             responses.put("counted")
+            responses.put("finished")
             scope._exit = True
         elif scope.pos == 0:
             responses.put("reverted")
+            responses.put("finished")
             scope._exit = True
     else:
         time.sleep(2)

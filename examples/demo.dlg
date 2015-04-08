@@ -46,6 +46,8 @@ count
 	okay let's count
 	i do like to count with 7 step
 	`count?!`
+		>'report'
+			`value`
 		>'half'
 			i't is quite large number
 		>'finished'

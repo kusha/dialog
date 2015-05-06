@@ -5,6 +5,7 @@ Dialog interperter.
 """
 __author__ = "Mark Birger"
 __date__ = "19 Nov 2014"
+__version__ = "0.1"
 
 from parser import Parser
 from scope import Scope
@@ -13,13 +14,109 @@ import speech
 import link_parser
 
 import multiprocessing
-import sys
+# import sys
+import argparse
+
+# USE_EVAL = False
+# TTS = "att"
 
 class Dialog:
     """
     Dialog interperter class.
     """
     def __init__(self, scope):
+
+        parser = argparse.ArgumentParser(
+            description=__doc__,
+            epilog=__author__+" "+__date__)
+        parser.add_argument(
+            '--version',
+            action='version',
+            version='%(prog)s '+__version__)
+        parser.add_argument(
+            '-s',
+            '--spoken', 
+            action='store_true',
+            required=False, 
+            help='run as a spoken dialog system',
+            dest='is_spoken')
+        # self.parser.add_argument(
+        #     '-r',
+        #     '--register-user',
+        #     action='store',
+        #     nargs=1, 
+        #     type=self.validate_auth, 
+        #     required=False, 
+        #     help='register new user', 
+        #     metavar='username:password',
+        #     dest='register')
+        # self.parser.add_argument(
+        #     '-l',
+        #     '--log-user',
+        #     action='store',
+        #     nargs=1, 
+        #     type=self.validate_auth, 
+        #     required=False, 
+        #     help='login as a user', 
+        #     metavar='username:password',
+        #     dest='login')
+        # self.parser.add_argument(
+        #     '-c',
+        #     '--show-contactlist',
+        #     action='store_true',
+        #     required=False, 
+        #     help='show user contact list',
+        #     dest='contacts')
+        # self.parser.add_argument(
+        #     '-a',
+        #     '--add-user',
+        #     action='store',
+        #     nargs=1, 
+        #     type=str, 
+        #     required=False, 
+        #     help='adds user to contact list', 
+        #     metavar='JID',
+        #     dest='add')
+        # self.parser.add_argument(
+        #     '-m',
+        #     '--message',
+        #     action='store',
+        #     nargs=1, 
+        #     type=str, 
+        #     required=False, 
+        #     help='specify message text', 
+        #     metavar='message',
+        #     dest='message')
+        # self.parser.add_argument(
+        #     '-u',
+        #     '--user',
+        #     action='store',
+        #     nargs=1, 
+        #     type=str, 
+        #     required=False, 
+        #     help='specify JID of a recipient', 
+        #     metavar='JID',
+        #     dest='user')
+        # self.parser.add_argument(
+        #     '-w',
+        #     '--wait',
+        #     action='store',
+        #     nargs=1, 
+        #     type=int, 
+        #     required=False, 
+        #     help='wait for response ss seconds before exit', 
+        #     metavar='ss',
+        #     dest='wait')
+        # self.parser.add_argument(
+        #     '-i',
+        #     '--interactive',
+        #     action='store_true',
+        #     required=False, 
+        #     help='enables interactive mode',
+        #     dest='interactive')
+        self.options = vars(parser.parse_args())
+        print(self.options)
+
         self.expected = []
         self.scope = Scope(scope)
         self.returns = Returns()
@@ -47,11 +144,11 @@ class Dialog:
         """
         Text/spoken mode select method.
         """
-        if len(sys.argv) > 1:
-            if sys.argv[1] == "-t":
-                return self.start_text()
-            elif sys.argv[1] == "-s":
+        if self.options["is_spoken"] != None:
+            if self.options["is_spoken"]:
                 return self.start_spoken()
+            else:
+                return self.start_text()
         else:
             print("Dialog system started in text mode by deafult.")
             print("Use -s option to run spoken mode.")

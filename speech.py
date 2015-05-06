@@ -12,7 +12,78 @@ from urllib.parse import quote
 import pyaudio, wave, math, audioop, time
 from collections import deque
 
+ATT_API_TOKEN = "BF-ACSI~2~20150313232123~gFirQv6InqBTx9bkWEc3fMpBApKDZKk0"
+# TODO: solve this bug/issue
+# def get_att_token():
+#     url = 'https://api.att.com/oauth/v4/token'
+#     data = "client_id=vif9lbw1cqcklfpjaewt8nhsm3rxyneu&client_secret=aif0secggtrnkuouprogzheqziucepxc&grant_type=client_credentials&scope=SPEECH,STTC,TTS"
+#     req = urllib.request.Request(
+#         url, 
+#         headers={
+#             "Accept": "application/json",
+#             "Content-Type": "application/x-www-form-urlencoded"
+#         },
+#         data=str.encode(data)
+#     )
+#     response = urllib.request.urlopen(req).read().decode("utf-8")
+#     return json.loads(response)["access_token"]
+
 def speaker(occupation, tosay):
+    """
+    TTS engine process by AT&T.
+    """
+    while True:
+        text = tosay.get()
+        url = 'https://api.att.com/speech/v3/textToSpeech'
+        req = urllib.request.Request(
+            url, 
+            data=str.encode(text), 
+            headers={
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) \
+                AppleWebKit/537.36 (KHTML, like Gecko) \
+                Chrome/35.0.1916.47 Safari/537.36',           
+                "Authorization": "Bearer "+ATT_API_TOKEN,
+                "Accept": "audio/x-wav",
+                "Content-Type": "text/plain"
+            }
+        )
+        # try:
+        response = urllib.request.urlopen(req)
+        # except urllib.error.HTTPError as err:
+        #     if err.code == 400 or err.code == 401:
+        #         get_att_token()
+        #         response = urllib.request.urlopen(req)
+        filename = 'temporary/answer_' + str(int(time.time()))
+        output = open(filename, 'wb')
+        output.write(response.read())
+        output.close()
+
+        occupation.wait()
+        occupation.clear()
+
+        chunk = 1024
+        wf = wave.open(filename, 'rb')
+        p = pyaudio.PyAudio()
+
+        stream = p.open(
+            format = p.get_format_from_width(wf.getsampwidth()),
+            channels = wf.getnchannels(),
+            rate = wf.getframerate(),
+            output = True)
+        data = wf.readframes(chunk)
+
+        while data != '':
+            stream.write(data)
+            data = wf.readframes(chunk)
+
+        stream.close()
+        p.terminate()
+
+        occupation.set()
+        # TODO: clear answers database automatically
+        # os.remove(filename)
+
+def speaker_google(occupation, tosay):
     """
     TTS engine process.
     """
@@ -53,7 +124,7 @@ def listener(occupation, recognizer_queue, threshold=2500, silence_limit=1):
     chunk = 1024                    # number of frames in buffer
     audio_format = pyaudio.paInt16  # sampling size and format
     channels = 1                    # number of channels
-    rate = 44100                    # sampling rate (samples per second)
+    rate = 16000#44100                    # sampling rate (samples per second)
 
     relative = rate / chunk         # chunks per second
 
@@ -138,6 +209,36 @@ def listener(occupation, recognizer_queue, threshold=2500, silence_limit=1):
             previuos.append(current_data)
 
 def recognizer(recognizer_queue, listener_queue):
+    while True:
+        data, sample_size, rate = recognizer_queue.get()
+
+        url = 'https://api.att.com/speech/v3/speechToText'
+        req = urllib.request.Request(
+            url, 
+            data=data, 
+            headers={
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) \
+                AppleWebKit/537.36 (KHTML, like Gecko) \
+                Chrome/35.0.1916.47 Safari/537.36',           
+                "Authorization": "Bearer "+ATT_API_TOKEN,
+                "Accept": "application/json",
+                "Content-Type": "audio/raw;coding=linear;rate=16000;byteorder=LE"
+            }
+        )
+        # try:
+        response = urllib.request.urlopen(req)
+        # except urllib.error.HTTPError as err:
+        #     print("warn")
+        #     if err.code == 400 or err.code == 401:
+        #         get_att_token()
+        #         response = urllib.request.urlopen(req)
+        result = json.loads(response.read().decode("utf-8"))["Recognition"]
+        if result["Status"] == "OK":
+            listener_queue.put(result["NBest"][0]["ResultText"])
+        else:
+            print("You> ???")
+
+def recognizer_google(recognizer_queue, listener_queue):
     while True:
         data, sample_size, rate = recognizer_queue.get()
         # save to wav file

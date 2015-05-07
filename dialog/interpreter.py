@@ -69,17 +69,10 @@ class Dialog:
 
     def start(self):
         """
-        Text/spoken mode select method.
+        Symlink for start_text().
         """
-        if self.options["is_spoken"] != None:
-            if self.options["is_spoken"]:
-                return self.start_spoken()
-            else:
-                return self.start_text()
-        else:
-            print("Dialog system started in text mode by deafult.")
-            print("Use -s option to run spoken mode.")
-            return self.start_text()
+        print("Dialog system started in text mode by deafult.")
+        return self.start_text()
 
     def start_spoken(self):
         """

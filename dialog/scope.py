@@ -31,22 +31,28 @@ class Scope:
             else:
                 return self.scope[name]
         except KeyError:
-            print("ERROR:",name, "is not defined at the scope")
+            print("ERROR:", name, "is not defined at the scope")
             sys.exit(1)
 
     def set(self, variables):
         """
         Set ups new variables from dictionary.
         """
+        for key, value in variables.items():
+            print("\t" + key, "<=", value)
         self.scope.update(variables)
 
     def parallel(self, name, return_queue):
         """
         Calls simplex routine, asynchroniously.
         """
-        routine = multiprocessing.Process(
-            target=self.scope[name],
-            args=(return_queue, ))
+        try:
+            routine = multiprocessing.Process(
+                target=self.scope[name],
+                args=(return_queue, ))
+        except KeyError:
+            print("ERROR: simplex routine", name, "is not defined at the scope")
+            sys.exit(1)
         routine.start()
         return routine
 
@@ -54,9 +60,13 @@ class Scope:
         """
         Calls duplex routine, asynchroniously.
         """
-        routine = multiprocessing.Process(
-            target=self.scope[name],
-            args=(requests_queue, return_queue, self.scope, ))
+        try:
+            routine = multiprocessing.Process(
+                target=self.scope[name],
+                args=(requests_queue, return_queue, self.scope, ))
+        except KeyError:
+            print("ERROR: duplex routine", name, "is not defined at the scope")
+            sys.exit(1)
         routine.start()
         self.routines[name] = {
             "process" : routine,

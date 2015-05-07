@@ -6,7 +6,7 @@ Link parser Python bindings.
 __author__ = "Mark Birger"
 __date__ = "19 Jan 2015"
 
-import subprocess, re, shelve
+import subprocess, re, shelve, sys
 from dialog import STORAGEPATH
 
 def parse(string):
@@ -18,12 +18,15 @@ def parse(string):
     if string in cache:
         return cache[string]
     proc = subprocess.Popen(
-        ['link-parser', '-postscript', '-graphics', '-verbosity=0'],
+        ['link-grammar-5.2.5/link-parser/link-parser', '-postscript', '-graphics', '-verbosity=0'],
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE)
     stdout_data = proc.communicate(input=string.encode('utf-8'))[0]
     stdout = stdout_data.decode('utf-8')
+    if proc.returncode != 0:
+        print("ERROR: dialog system is unable to run link-parser")
+        sys.exit(1)
     # filter newlines
     r_unwanted = re.compile("[\n\t\r]")
     stdout = r_unwanted.sub("", stdout)

@@ -14,6 +14,8 @@ from urllib.parse import quote
 import pyaudio, wave, math, audioop, time
 from collections import deque
 
+import sys
+
 ATT_API_TOKEN = "BF-ACSI~2~20150313232123~gFirQv6InqBTx9bkWEc3fMpBApKDZKk0"
 # TODO: solve this bug/issue
 # def get_att_token():
@@ -30,7 +32,7 @@ ATT_API_TOKEN = "BF-ACSI~2~20150313232123~gFirQv6InqBTx9bkWEc3fMpBApKDZKk0"
 #     response = urllib.request.urlopen(req).read().decode("utf-8")
 #     return json.loads(response)["access_token"]
 
-def speaker(occupation, tosay):
+def speaker_ATT(occupation, tosay):
     """
     TTS engine process by AT&T.
     """
@@ -86,7 +88,7 @@ def speaker(occupation, tosay):
         # TODO: clear answers database automatically
         # os.remove(filename)
 
-def speaker_google(occupation, tosay):
+def speaker(occupation, tosay):
     """
     TTS engine process.
     """
@@ -105,9 +107,13 @@ def speaker_google(occupation, tosay):
                 Chrome/35.0.1916.47 Safari/537.36'
             }
         )
-        response = urllib.request.urlopen(req)
+        try:
+            response = urllib.request.urlopen(req)
+        except urllib.error.HTTPError:
+            print("ERROR: HTTP error during request to TTS engine")
+            sys.exit(1)
         global STORAGEPATH
-        filename = STORAGEPATH + '/answers/answer_' + str(int(time.time()))
+        filename = STORAGEPATH + '/answers/answer_' + str(int(time.time())) + '.mp3'
         output = open(filename, 'wb')
         output.write(response.read())
         output.close()
@@ -212,7 +218,7 @@ def listener(occupation, recognizer_queue, threshold=2500, silence_limit=1):
             # record data for future prepend
             previuos.append(current_data)
 
-def recognizer(recognizer_queue, listener_queue):
+def recognizer_att(recognizer_queue, listener_queue):
     while True:
         data, sample_size, rate = recognizer_queue.get()
 
@@ -242,7 +248,7 @@ def recognizer(recognizer_queue, listener_queue):
         else:
             print("You> ???")
 
-def recognizer_google(recognizer_queue, listener_queue):
+def recognizer(recognizer_queue, listener_queue):
     while True:
         data, sample_size, rate = recognizer_queue.get()
         # save to wav file
@@ -263,8 +269,6 @@ def recognizer_google(recognizer_queue, listener_queue):
             stdout=devnull,
             stderr=devnull)
         converter.wait()
-        # TODO: clear questions database
-        # os.remove(filename)
         # recognize text
         flac_file = open(filename+'.flac', 'rb')
         flac_container = flac_file.read()
@@ -276,10 +280,14 @@ def recognizer_google(recognizer_queue, listener_queue):
             headers={
                 "User-Agent": "Mozilla/5.0 (X11; Linux i686) Apple\
 WebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.63 Safari/535.7",
-                'Content-type': 'audio/x-flac; rate=44100'
+                'Content-type': 'audio/x-flac; rate=16000'
             }
         )
-        response = urllib.request.urlopen(req)
+        try:
+            response = urllib.request.urlopen(req)
+        except urllib.error.HTTPError:
+            print("ERROR: HTTP error during request to STT engine")
+            sys.exit(1)
         os.remove(filename+'.flac')
         response = response.read().decode('utf-8')
         response = response.split('\n', 1)[1]

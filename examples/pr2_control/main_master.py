@@ -44,6 +44,7 @@ def make_wo_sugar(responses):
 # two-way activity
 i = 10
 
+angry = False
 def fucnt():
     i = 11
     return i
@@ -124,5 +125,5 @@ def movement(requests, responses, scope):
 
 if __name__ == "__main__":
     DLG = Dialog(globals())
-    DLG.load("examples/tickets.dlg")
+    DLG.load("examples/features_demo/tickets.dlg")
     DLG.start()

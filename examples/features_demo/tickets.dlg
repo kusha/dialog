@@ -125,9 +125,10 @@ what is new
 		'updated'
 			i'm ready
 		'ready'
-			`read_news`
+			#`read_news`
+			bla bla bla i'm reading news
 				read more
-					`current`
+					okay
 
 come to me
 	okay i'm moving to you

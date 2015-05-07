@@ -6,6 +6,7 @@ Scope manipulations.
 __author__ = "Mark Birger"
 __date__ = "20 Nov 2014"
 
+import sys
 import multiprocessing
 
 class Scope:
@@ -24,10 +25,14 @@ class Scope:
         """
         Calls inline function or return variables.
         """
-        if hasattr(self.scope[name], '__call__'):
-            return self.scope[name]()
-        else:
-            return self.scope[name]
+        try:
+            if hasattr(self.scope[name], '__call__'):
+                return self.scope[name]()
+            else:
+                return self.scope[name]
+        except KeyError:
+            print("ERROR:",name, "is not defined at the scope")
+            sys.exit(1)
 
     def set(self, variables):
         """

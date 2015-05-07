@@ -6,6 +6,8 @@ Dialog interperter.
 __author__ = "Mark Birger"
 __date__ = "1 Jan 2015"
 
+from dialog import STORAGEPATH
+
 import subprocess, os, json, urllib.request
 from urllib.parse import quote
 
@@ -53,7 +55,8 @@ def speaker(occupation, tosay):
         #     if err.code == 400 or err.code == 401:
         #         get_att_token()
         #         response = urllib.request.urlopen(req)
-        filename = 'temporary/answer_' + str(int(time.time()))
+        global STORAGEPATH
+        filename = STORAGEPATH + '/answers/answer_' + str(int(time.time()))
         output = open(filename, 'wb')
         output.write(response.read())
         output.close()
@@ -103,7 +106,8 @@ def speaker_google(occupation, tosay):
             }
         )
         response = urllib.request.urlopen(req)
-        filename = 'temporary/answer_' + str(int(time.time()))
+        global STORAGEPATH
+        filename = STORAGEPATH + '/answers/answer_' + str(int(time.time()))
         output = open(filename, 'wb')
         output.write(response.read())
         output.close()
@@ -242,7 +246,8 @@ def recognizer_google(recognizer_queue, listener_queue):
     while True:
         data, sample_size, rate = recognizer_queue.get()
         # save to wav file
-        filename = 'temporary/question_'+str(int(time.time()))
+        global STORAGEPATH
+        filename = STORAGEPATH + '/questions/question_'+str(int(time.time()))
         wav_file = wave.open(filename+'.wav', 'wb')
         wav_file.setnchannels(1)
         wav_file.setsampwidth(sample_size)

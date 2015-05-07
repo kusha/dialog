@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 
-from parser import Parser
-from scope import Scope
-from returns import Returns
-import link_parser
+from dialog.parser import Parser
+from dialog.scope import Scope
+from dialog.returns import Returns
+import dialog.link_parser
 
 import multiprocessing
 import json
 
-from dialog import Dialog
+from dialog.interpreter import Dialog
 
 class Instance(Dialog):
     """

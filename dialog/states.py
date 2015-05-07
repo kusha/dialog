@@ -6,7 +6,7 @@ Dialog states implementation.
 __author__ = "Mark Birger"
 __date__ = "18 Nov 2014"
 
-from phrase import Phrase
+from dialog.phrase import Phrase
 import multiprocessing
 import ast
 

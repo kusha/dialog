@@ -5,17 +5,23 @@ Dialog interperter.
 """
 __author__ = "Mark Birger"
 __date__ = "19 Nov 2014"
-__version__ = "0.1"
+__version__ = "0.3"
 
-from parser import Parser
-from scope import Scope
-from returns import Returns
-import speech
-import link_parser
+
+from dialog import STORAGEPATH
+
+
+
+from dialog.parser import Parser
+from dialog.scope import Scope
+from dialog.returns import Returns
+import dialog.speech as speech
+import dialog.link_parser as link_parser
 
 import multiprocessing
 # import sys
 import argparse
+import os
 
 # USE_EVAL = False
 # TTS = "att"
@@ -24,7 +30,19 @@ class Dialog:
     """
     Dialog interperter class.
     """
-    def __init__(self, scope):
+    def __init__(self, scope, storage="./"):
+
+        global STORAGEPATH
+        STORAGEPATH = storage + STORAGEPATH
+        STORAGEPATH = os.path.abspath(STORAGEPATH)
+        print("Data storage path:", STORAGEPATH)
+        if not os.path.exists(STORAGEPATH):
+            os.makedirs(STORAGEPATH)
+        if not os.path.exists(STORAGEPATH + "/answers/"):
+            os.makedirs(STORAGEPATH + "/answers/")
+        if not os.path.exists(STORAGEPATH + "/questions/"):
+            os.makedirs(STORAGEPATH + "/questions/")
+
 
         parser = argparse.ArgumentParser(
             description=__doc__,
@@ -291,3 +309,6 @@ def handle(callbacks, before=lambda scope: None, after=lambda scope: None):
             after(scope)
         return inner
     return decorator
+
+if __name__ == "__main__":
+    pass

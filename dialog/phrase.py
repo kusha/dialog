@@ -8,7 +8,7 @@ __date__ = "19 Nov 2014"
 
 import re           # for text processin
 import ast          # for safe literal evaluation
-import link_parser  # for NLP parsing
+import dialog.link_parser as link_parser  # for NLP parsing
 
 class Phrase:
     """

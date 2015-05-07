@@ -7,7 +7,7 @@ __author__ = "Mark Birger"
 __date__ = "19 Nov 2014"
 
 import re
-from states import Question, Answer, Routine, Literal, Literal2, Routine2
+from dialog.states import Question, Answer, Routine, Literal, Literal2, Routine2
 
 class Parser:
     def __init__(self, filename, scope, returns, identation='\t'):

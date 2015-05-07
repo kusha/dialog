@@ -4,15 +4,17 @@
 Link parser Python bindings.
 """
 __author__ = "Mark Birger"
-__date__ = "19 Jan 2014"
+__date__ = "19 Jan 2015"
 
 import subprocess, re, shelve
+from dialog import STORAGEPATH
 
 def parse(string):
     """
     Link-parser output data parser.
     """
-    cache = shelve.open("nlp_cache")
+    global STORAGEPATH
+    cache = shelve.open(STORAGEPATH + "/sentences")
     if string in cache:
         return cache[string]
     proc = subprocess.Popen(

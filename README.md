@@ -3,7 +3,50 @@
 
 ## Overview
 
-This project implements dialog system framework. This framework is designed for robotic pruposes, but it's possible to create spoken dialog interface for any Python software.
+This project implements dialog system (DS) framework. This framework is designed for robotic pruposes, but it's possible to create spoken dialog interface for any Python software.
+
+Project structure:
+
+	.
+	├── LICENSE.txt
+	├── README.md
+	├── data
+	│   ├── answers
+	│   │   └── answer_XXXX.mp3
+	│   ├── questions
+	│   │   └── question_XXXX.wav
+	│   └── sentences.db
+	├── dialog
+	│   ├── __init__.py
+	│   ├── interpreter.py
+	│   ├── link_parser.py
+	│   ├── parser.py
+	│   ├── phrase.py
+	│   ├── returns.py
+	│   ├── scope.py
+	│   ├── server.py
+	│   ├── speech.py
+	│   └── states.py
+	├── docs
+	│   └── ...
+	├── examples
+	│   ├── assistant.dlg
+	│   ├── demo.dlg
+	│   ├── echo.dlg
+	│   ├── features_demo
+	│   ├── pizza_order
+	│   ├── pr2_control
+	│   │   ├── movement.py
+	│   │   └── pr2_control.py
+	│   ├── tickets.dlg
+	│   └── web_interface
+	│       └── main_slave.py
+	├── remote
+	│   ├── spoken_mode.py
+	│   └── text_mode.py
+	├── setup.py
+	├── test.py
+	└── tests
 
 
 ## Documentation
@@ -38,20 +81,20 @@ To uninstall this packege:
 	
 ## Dependencies
 	
-This dialog system framework use Link Grammar parser for natural language processing. You can install Link Grammar parser from the aptittude:
+This DS framework use Link Grammar parser for natural language processing. You can install Link Grammar parser from the aptittude:
 
 	sudo apt-get install link-parser
 	
 Another option is to compile from sources:
 
-	TODO
+	link-grammar-5.2.5.tar.gz
 	
 If you would like to run spoken dialog system (not in text mode):
 
-	sudo apt-get install portaudio19-dev 
+	sudo apt-get install portaudio19-dev mpg123 flac
 	easy_install-3.x pyaudio
 	
-For WebSocket install you also need a Tornado webserver:
+For WebSocket you also need a Tornado webserver:
 
 	pip3 install tornado
 	
@@ -68,12 +111,47 @@ Your code should have this stucture:
     	DLG = Dialog(globals(), storage="./")
     	DLG.load("example.dlg")
     	DLG.start_spoken()
+ 
+In storage directory DS will create data folder for recorded answers/questions and sentences database. Storage directory by default is `./`. `DLG.start_text()` оr `DLG.start_spoken()` define spoken mode or text mode.
 
 ## Dialog description files
 
 `.dlg` file describe a dialog model.
 
 ## Examples
+
+## PR2 implementation
+
+### Microphone issue
+
+The PR2 robot don't have an access to Kinect microphone. Spoken DS isn't be able to record an audio at the PR2. We've created a `DLG.start_socket(port=42424)` option to run DS. In this exmple dialog system listens 42424 port, recives text messages and responds with speech. You need to run special remote configuration at the basestation, which can send recognized messages to the socket.
+
+Run remote client in text mode:
+
+	python3 remote/text_mode.py -p 42424 127.0.0.1
+	python3 remote/spoken_mode.py -p 42424 127.0.0.1
+	
+Note, that spoken mode client stores question in `./data/` directory!
+
+### Python 2 issue
+
+PR2 has a ROS hydro onboard. hydro distibution uses Python 2 as a default interpreter and it wasn't possible to run Python3 program, wich uses rospy. Recommened way to solve this issue is `execnet` module:
+
+	pip3 install execnet
+	
+This module allows to communicate between Python2 and Python3 interpreters. Take a look at `examples/pr2_control/` for an example.
+
+### How to run dialog system with pr2 simulation
+
+Connect to robodev1.fit.vutbr.cz server with this instruction [Robodev1 How to get remote desktop](http://merlin.fit.vutbr.cz/wiki/index.php/Robodev1).
+
+- Create an empty work catkin workspace
+- Put this repo ([PR2/pr2_simulator](https://github.com/PR2/pr2_simulator)) inside of the `src/` direcotry
+- Make catkin workpsace
+- `source devel/setup.bash`
+- `vglrun roslaunch pr2_gazebo pr2_empty_world.launch`
+
+You should see a PR2 robot inside of the simulation. Then you can run your Python code from anywhere.
 
 ## Other stuff
 
@@ -85,357 +163,5 @@ To run websocket server in background mode:
 
 	screen -S dialog_screen -d -m python3 server.py
 
-
-### Identation
-Identation defines input or output of the dialog system.
-
-	# this is a comment
-	# white-symbol lines ignored
-
-	# identation structure
-	Question
-		Answer
-			Question
-				Answer
-				
-	# few questions at the top level
-	Question1
-		Answer1
-	Question2
-		Answer2	
-
-	# both of these Questions triggers Answer
-	Question1
-	Question2
-		Answer
-		
-	# this question calls two Answers
-	Question
-		Answer1
-			...
-		Answer2
-			...
-	
-	# Question calls Answer1 and Answer2
-	# ... is Answer2 child, Answer1 has no childs
-	Question
-		Answer1 
-		Answer2
-			...
-
-No matter:	
-
-	# Question calls Answer1 and Answer2
-	# ... is child of Answer1 and Answer2
-	Question
-		Answer1 &
-		Answer2
-			...
-	
-
-	
-	# lower idenation levels are possible
-	Question
-		Answer
-			Question
-				Answer
-					Question
-						Answer
-	Question
-		Answer
-			Question
-	Question
-		Answer
-
-*Answer isn't obligatory at the last level.*		
-Take a look at these identation errors:
-
-	# identation error
-	Question
-		Answer
-				Question
-	
-	# valid structure, but AnswerX is Question1 child
-	Question1
-		Answer
-			Question
-				Answer
-	#Question2
-		AnswerX
-			Question
-			
-
-### Random answers
-
-Used to add different possible phrases for the same context.
-
-Not available at the **question-level**. Question-level is zero, even identation level.
-
-	# Question calls Answer3 and one of (Answer1, Answer2, Answer3)
-	# with the same probability 33.3%
-	Question
-		% Answer1
-		% Answer2
-		Answer3
-		% Answer4
-	
-	# here is possibility of collecting posibility groups
-	# 50% between (Answer1, Answer3) and 50% between (Answer2, Answer4)
-	Question
-		%1 Answer1
-		%2 Answer2
-		%1 Answer3
-		%2 Answer4
-		Answer5
-		
-	# if no identifcator available - it is an empty group
-	# 50% between (Answer2, Answer3) and 33.3% between (Answer1, Answer4, Answer5)
-	Question
-		%1 Answer1
-		% Answer2
-		% Answer3
-		%1 Answer4
-		%1 Answer5
-	
-	# custom probability values
-	# calls Answer2, 30% Answer1, 20% Answer4 and 25% between (Answer4, Answer5)
-	Question
-		30% Answer1
-		Answer2
-		20% Answer3
-		% Answer4	
-		% Answer5
-	
-
-`TODO possibility between groups`
-
-Usage exmaple:
-	
-	Hi
-	Hello
-	Good morning!
-		10% Hi
-		% Hello
-
-### State flow
-
-Dialog has few states simultaneously. At initial state acceptable questions without identation.
-
-This examples show possible dialog states:
-
-	-> Is pizza delievered?
-		Not yet # function binding below
-			Call to the courier
-				I'm goinng to call the courier
-	-> What's the wheater today?
-		Shiny, but 15 degrees
-			Which clothes do you recommend?
-				Sweater and jacket
-	
-	# possible inputs:
-	What's the wheater today?
-	Is pizza delievered?
-	
-	# after phrase Is pizza delievered?:
-	# and answer: Not yet
-	Is pizza delievered?
-		Not yet # function binding below
-			-> Call to the courier
-				I'm goinng to call the courier
-	-> What's the wheater today?
-		Shiny, but 15 degrees
-			Which clothes do you recommend?
-				Sweater and jacket
-
-	??? losing state
-	
-### Inline data
-
-You can use variables and function defined in code before sharing the global scope. Or varaibles updated during the interpretation.
-
-Python code, somewhere at the global scope:
-
-	def btc_rate():
-		rate_eur = get_url_request()
-		return rate_eur
-	
-	cpu_temp = 54
-
-
-Dialog code:
-
-	What's the current bitcoin rate?
-		It's `btc_rate` euros for one bitcoin
-	
-	What is your CPU temperature?
-		`cpu_temp` degrees
-		unfortunately not below zero
-		
-### Set data
-
-#### Fixed data
-
-	`variable_name:Python_literal` 
-
-Can be used anywhere, sets if dialog going thru this phrase. Used in question-leve and answer-level.
-
-Python code, somewhere at the global scope:
-
-	def look_report():
-		if not friendly:
-			return "You look great, as always"
-		else:
-			return joke("look")
-
-Dialog code:
-
-	You are annoying `friendly:False`
-		Sorry
-		
-	How i looks like?
-		`look_report`
-
-#### Flexible data
-
-	`variable_name~Python_literal` 
-
-Can be used anywhere, sets if dialog going thru this phrase. Used in question-leve and answer-level.
-
-Dialog code:
-
-	...
-		What is your name?
-			My name is `collocutor~Mark`
-				Nice to meet you, `collocutor`
-
-### Routines call
-
-	`function_name?` 
-
-Call is only element at the line at answer-level. Values are at question-level. Activity is at answer-level. ANswers are Python literal.
-
-	`function_name`? # it will generate inline call and append ? to the end
-	
-This calls aren't locking proceess. They creates Queue, which processed at the same time as user input.
-
-Python code, somewhere at the global scope:
-
-	def make_tea():
-		go_to_kitchen()
-		check_tea()
-		check_water()
-		do_manipulations()
-
-Dialog code:
-
-	Make me a tea.
-		No problems, i'm gooing to kitchen
-		`make_tea?`
-			'no tea'
-				Sorry there is no tea, can i add tea to your shopping list?
-			'no water'
-				I can't find water.
-				
-	# after Make me a tea phrase and response
-	# robot calls make_tea function in new subprocess
-	# at the input stage checks queue
-
-??? end keyword - needed if we would like use probability to end a dialog
-
-## Cases
-
-### Recognition quality contorol
-
-### Acitivity manager
-
-### Command - clarify - accept
-
-### Explain - stop - interrupt
-
-### I can't do something because
-
-## Link-parser usage
-
-Example of parsing similar word.
-
-	My name is `name~John`
-
-	    +-------->WV------->+
-    	+------Wd-----+     |
-    	|       +Ds**c+--Ss-+-Ost-+
-    	|       |     |     |     |
-	LEFT-WALL my.p name.n is.v Mark.b
-
-	[(LEFT-WALL)(my.p)(name.n)(is.v)(Mark.b)]
-	[[0 3 2 (WV)][0 2 1 (Wd)][2 3 0 (Ss)][1 2 0 (Ds**c)][3 4 0 (Ost)]]
-	[0]
-
-
-    	+-------->WV------->+
-    	+------Wd-----+     |
-    	|       +Ds**c+--Ss-+--Ost-+
-    	|       |     |     |      |
-	LEFT-WALL my.p name.n is.v Pavel[!]
-
-	[(LEFT-WALL)(my.p)(name.n)(is.v)(Pavel[!])]
-	[[0 3 2 (WV)][0 2 1 (Wd)][2 3 0 (Ss)][1 2 0 (Ds**c)][3 4 0 (Ost)]]
-	[0]
-
-	             +-----Osn-----+
-    	+---Wi---+-Ox-+ +-Ds**c+
-    	|        |    | |      |
-	LEFT-WALL make.v me a sandwich.s
-
-	[(LEFT-WALL)(make.v)(me)(a)(sandwich.s)]
-	[[0 1 0 (Wi)][1 4 1 (Osn)][1 2 0 (Ox)][3 4 0 (Ds**c)]]
-	[0]
-
-	
-	    +------------------Xp------------------+
-    	|       +-----I----+-----Osn-----+     |
-    	+---Qd--+-SIp+     +-Ox-+ +-Ds**c+     |
-    	|       |    |     |    | |      |     |
-	LEFT-WALL can.v you make.v me a sandwich.s ?
-
-	[(LEFT-WALL)(can.v)(you)(make.v)(me)(a)(sandwich.s)(?)]
-	[[0 7 2 (Xp)][0 1 0 (Qd)][1 3 1 (I)][1 2 0 (SIp)][3 6 1 (Osn)][3 4 0 (Ox)][5 6 0 (Ds**c)]]
-	[0]
-
-
-Automatic UML generation:
-
-	pyreverse -f 'ALL' -o png dialog.py parser.py states.py scope.py phrase.py link_parser.py speech.py returns.py
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	
-	
-		
-	
-		
-	
+The MIT License (MIT)
+Copyright (c) 2015 Mark Birger

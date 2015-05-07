@@ -9,9 +9,6 @@ __version__ = "0.3"
 
 
 from dialog import STORAGEPATH
-
-
-
 from dialog.parser import Parser
 from dialog.scope import Scope
 from dialog.returns import Returns
@@ -22,6 +19,8 @@ import multiprocessing
 # import sys
 import argparse
 import os
+import signal
+import sys
 
 # USE_EVAL = False
 # TTS = "att"
@@ -133,11 +132,12 @@ class Dialog:
         #     help='enables interactive mode',
         #     dest='interactive')
         self.options = vars(parser.parse_args())
-        print(self.options)
+        # print(self.options)
 
         self.expected = []
         self.scope = Scope(scope)
         self.returns = Returns()
+        signal.signal(signal.SIGINT, self.interrupt_handler)
 
     def load(self, filename):
         """
@@ -268,6 +268,11 @@ class Dialog:
                     if answer != "":
                         print("Bot> "+answer)
                 self._extend_expected(questions)
+
+    @staticmethod
+    def interrupt_handler(signal, frame):
+        print("INFO: dialog system process is closed")
+        sys.exit(0)
 
 def handle(callbacks, before=lambda scope: None, after=lambda scope: None):
     """

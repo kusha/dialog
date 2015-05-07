@@ -1,22 +1,90 @@
-# Dialog system
+# Dialog system framework
 
-## Initialization 
 
-Inicialization of the module.
+## Overview
+
+This project implements dialog system framework. This framework is designed for robotic pruposes, but it's possible to create spoken dialog interface for any Python software.
+
+
+## Documentation
+
+Implemented framework isn't compilacted, so it uses light-weight document generator Pycco. To build a documentation, simply run this command at the repository root.
+
+	pycco ./dialog/*.py -d ./docs
+	
+## Installation
+
+Make sure, that you have a Python3 and pip3 and/or easy_install-3.x installed.
+
+	sudo apt-get install python3-setuptools python3.4-dev python3-pip
+
+You need to clone the repo:
+
+	git clone https://github.com/kusha/dialog.git
+
+Recommended way to install this package is using the pip3. Run this command inside of a project directory.
+
+	pip3 install ./
+
+If you don't have a root:
+
+	pip3 install --user ./
+	
+After this command, you can import inside of your python3 programs. Also this installation adds a command-line `dialog_system` command. Use this command to run slave acitvity code.
+	
+To uninstall this packege:
+
+	pip3 uinstall dialog
+	
+## Dependencies
+	
+This dialog system framework use Link Grammar parser for natural language processing. You can install Link Grammar parser from the aptittude:
+
+	sudo apt-get install link-parser
+	
+Another option is to compile from sources:
+
+	TODO
+	
+If you would like to run spoken dialog system (not in text mode):
+
+	sudo apt-get install portaudio19-dev 
+	easy_install-3.x pyaudio
+	
+For WebSocket install you also need a Tornado webserver:
+
+	pip3 install tornado
+	
+## Getting started
+
+Your code should have this stucture:
 
 	from dialog import Dialog
+	
+	# your variables definitions
+	# your functions/callables objects definition
 
 	if __name__ == "__main__":
-    	DLG = Dialog(globals(), debug=True)
+    	DLG = Dialog(globals(), storage="./")
     	DLG.load("example.dlg")
-    	DLG.interprete()
-    	
-We need to share global scope of program to dialog system. It's needed to call functions and use variables from the dialog.
+    	DLG.start_spoken()
 
+## Dialog description files
 
-## Dialog description format 
+`.dlg` file describe a dialog model.
 
-`.dlg` files describes dialog model.
+## Examples
+
+## Other stuff
+
+To generate a modules graph:
+
+	pyreverse -f 'ALL' -m y -o png -p Dialog *
+	
+To run websocket server in background mode:
+
+	screen -S dialog_screen -d -m python3 server.py
+
 
 ### Identation
 Identation defines input or output of the dialog system.

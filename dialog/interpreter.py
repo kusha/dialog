@@ -272,16 +272,16 @@ def handle(callbacks, before=lambda scope: None, after=lambda scope: None):
                 if not name.startswith('__'):
                     initial_scope[name] = obj
             scope = type('', (), initial_scope)()
-            before(scope)
+            before(scope, responses)
             while True:
                 while not requests.empty():
                     request = requests.get()
                     if request in callbacks:
-                        callbacks[request](scope)
+                        callbacks[request](scope, responses)
                     else:
                         print("Warining: unhandled request")
                         if "" in callbacks:
-                            callbacks[""](scope)
+                            callbacks[""](scope, responses)
                         else:
                             pass
                 # TODO: is it good way to finish routine?
@@ -290,7 +290,7 @@ def handle(callbacks, before=lambda scope: None, after=lambda scope: None):
                 async_func(requests, responses, scope)
                 if hasattr(scope, '_exit') and scope._exit:
                     break
-            after(scope)
+            after(scope, responses)
         return inner
     return decorator
 

@@ -21,6 +21,7 @@ import argparse
 import os
 import signal
 import sys
+from socket import *
 
 # USE_EVAL = False
 # TTS = "att"
@@ -41,98 +42,6 @@ class Dialog:
             os.makedirs(STORAGEPATH + "/answers/")
         if not os.path.exists(STORAGEPATH + "/questions/"):
             os.makedirs(STORAGEPATH + "/questions/")
-
-
-        parser = argparse.ArgumentParser(
-            description=__doc__,
-            epilog=__author__+" "+__date__)
-        parser.add_argument(
-            '--version',
-            action='version',
-            version='%(prog)s '+__version__)
-        parser.add_argument(
-            '-s',
-            '--spoken', 
-            action='store_true',
-            required=False, 
-            help='run as a spoken dialog system',
-            dest='is_spoken')
-        # self.parser.add_argument(
-        #     '-r',
-        #     '--register-user',
-        #     action='store',
-        #     nargs=1, 
-        #     type=self.validate_auth, 
-        #     required=False, 
-        #     help='register new user', 
-        #     metavar='username:password',
-        #     dest='register')
-        # self.parser.add_argument(
-        #     '-l',
-        #     '--log-user',
-        #     action='store',
-        #     nargs=1, 
-        #     type=self.validate_auth, 
-        #     required=False, 
-        #     help='login as a user', 
-        #     metavar='username:password',
-        #     dest='login')
-        # self.parser.add_argument(
-        #     '-c',
-        #     '--show-contactlist',
-        #     action='store_true',
-        #     required=False, 
-        #     help='show user contact list',
-        #     dest='contacts')
-        # self.parser.add_argument(
-        #     '-a',
-        #     '--add-user',
-        #     action='store',
-        #     nargs=1, 
-        #     type=str, 
-        #     required=False, 
-        #     help='adds user to contact list', 
-        #     metavar='JID',
-        #     dest='add')
-        # self.parser.add_argument(
-        #     '-m',
-        #     '--message',
-        #     action='store',
-        #     nargs=1, 
-        #     type=str, 
-        #     required=False, 
-        #     help='specify message text', 
-        #     metavar='message',
-        #     dest='message')
-        # self.parser.add_argument(
-        #     '-u',
-        #     '--user',
-        #     action='store',
-        #     nargs=1, 
-        #     type=str, 
-        #     required=False, 
-        #     help='specify JID of a recipient', 
-        #     metavar='JID',
-        #     dest='user')
-        # self.parser.add_argument(
-        #     '-w',
-        #     '--wait',
-        #     action='store',
-        #     nargs=1, 
-        #     type=int, 
-        #     required=False, 
-        #     help='wait for response ss seconds before exit', 
-        #     metavar='ss',
-        #     dest='wait')
-        # self.parser.add_argument(
-        #     '-i',
-        #     '--interactive',
-        #     action='store_true',
-        #     required=False, 
-        #     help='enables interactive mode',
-        #     dest='interactive')
-        self.options = vars(parser.parse_args())
-        # print(self.options)
 
         self.expected = []
         self.scope = Scope(scope)
@@ -269,6 +178,76 @@ class Dialog:
                         print("Bot> "+answer)
                 self._extend_expected(questions)
 
+    def start_socket(self, port=42424):
+        """
+        Listens socket for input phrases.
+        """
+        host = ""
+        buf = 1024
+        addr = (host, port)
+        UDPSock = socket(AF_INET, SOCK_DGRAM)
+        UDPSock.bind(addr)
+        print("Listening socket")
+
+        occupation = multiprocessing.Event()
+        # listener_queue = multiprocessing.Queue(maxsize=0)
+        # recognizer_queue = multiprocessing.Queue(maxsize=0)
+        speaker_queue = multiprocessing.Queue(maxsize=0)
+        speaker = multiprocessing.Process(
+            target=speech.speaker,
+            args=(occupation, speaker_queue, ))
+        # recognizer = multiprocessing.Process(
+        #     target=speech.recognizer,
+        #     args=(recognizer_queue, listener_queue, ))
+        # listener = multiprocessing.Process(
+        #     target=speech.listener,
+        #     args=(occupation, recognizer_queue, ))
+        speaker.start()
+        # recognizer.start()
+        # listener.start()
+        occupation.set()
+
+        print("======")
+        for state in self.expected:
+            print("\t%s" % (state))
+        print("======")
+        while True:
+            # process routines answers
+            answers = self.returns.get_returns()
+            for answer in answers:
+                tosay, questions = answer.accept()
+                speaker_queue.put(tosay)
+                print("Bot> "+tosay)
+                self._extend_expected(questions)
+            # process input
+            (data, addr) = UDPSock.recvfrom(buf)
+            input_phrase = data.decode("utf-8")
+            print("You> "+input_phrase)
+            while not input_phrase.strip():
+                print("Empty input string")
+                input_phrase = input("You> ")
+            input_phrase = link_parser.parse(input_phrase)
+            states_probability = []
+            for state in self.expected:
+                # print(state, state.compare(input_phrase))
+                states_probability.append((state, state.compare(input_phrase)))
+            states_probability = sorted(states_probability, key=lambda x: x[1], reverse=True)
+            print("======")
+            for state in states_probability:
+                print("%.2f\t%s" % (state[1], state[0]))
+            print("======")
+            state = states_probability[0][0]
+            if states_probability[0][1] < 0.2:
+                print("Bot> ???")
+            else:
+                tosay, questions = state.accept(input_phrase)
+                for answer in tosay:
+                    if answer != "":
+                        speaker_queue.put(answer)
+                        print("Bot> "+answer)
+                self._extend_expected(questions)
+        UDPSock.close()
+
     @staticmethod
     def interrupt_handler(signal, frame):
         print("INFO: dialog system process is closed")
@@ -316,6 +295,22 @@ def handle(callbacks, before=lambda scope: None, after=lambda scope: None):
     return decorator
 
 def run_master():
+    parser = argparse.ArgumentParser(
+        description=__doc__,
+        epilog=__author__+" "+__date__)
+    parser.add_argument(
+        '--version',
+        action='version',
+        version='%(prog)s '+__version__)
+    parser.add_argument(
+        '-s',
+        '--spoken', 
+        action='store_true',
+        required=False, 
+        help='run as a spoken dialog system',
+        dest='is_spoken')
+    self.options = vars(parser.parse_args())
+    # print(self.options)
     print("TODO run master mode")
 
 if __name__ == "__main__":

@@ -1,0 +1,616 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<style>
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote {
+    margin: 0;
+    padding: 0;
+}
+body {
+    font-family: "Helvetica Neue", Helvetica, "Hiragino Sans GB", Arial, sans-serif;
+    font-size: 13px;
+    line-height: 18px;
+    color: #737373;
+    background-color: white;
+    margin: 10px 13px 10px 13px;
+}
+table {
+	margin: 10px 0 15px 0;
+	border-collapse: collapse;
+}
+td,th {	
+	border: 1px solid #ddd;
+	padding: 3px 10px;
+}
+th {
+	padding: 5px 10px;	
+}
+
+a {
+    color: #0069d6;
+}
+a:hover {
+    color: #0050a3;
+    text-decoration: none;
+}
+a img {
+    border: none;
+}
+p {
+    margin-bottom: 9px;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: #404040;
+    line-height: 36px;
+}
+h1 {
+    margin-bottom: 18px;
+    font-size: 30px;
+}
+h2 {
+    font-size: 24px;
+}
+h3 {
+    font-size: 18px;
+}
+h4 {
+    font-size: 16px;
+}
+h5 {
+    font-size: 14px;
+}
+h6 {
+    font-size: 13px;
+}
+hr {
+    margin: 0 0 19px;
+    border: 0;
+    border-bottom: 1px solid #ccc;
+}
+blockquote {
+    padding: 13px 13px 21px 15px;
+    margin-bottom: 18px;
+    font-family:georgia,serif;
+    font-style: italic;
+}
+blockquote:before {
+    content:"\201C";
+    font-size:40px;
+    margin-left:-10px;
+    font-family:georgia,serif;
+    color:#eee;
+}
+blockquote p {
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 18px;
+    margin-bottom: 0;
+    font-style: italic;
+}
+code, pre {
+    font-family: Monaco, Andale Mono, Courier New, monospace;
+}
+code {
+    background-color: #fee9cc;
+    color: rgba(0, 0, 0, 0.75);
+    padding: 1px 3px;
+    font-size: 12px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+pre {
+    display: block;
+    padding: 14px;
+    margin: 0 0 18px;
+    line-height: 16px;
+    font-size: 11px;
+    border: 1px solid #d9d9d9;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+pre code {
+    background-color: #fff;
+    color:#737373;
+    font-size: 11px;
+    padding: 0;
+}
+sup {
+    font-size: 0.83em;
+    vertical-align: super;
+    line-height: 0;
+}
+* {
+	-webkit-print-color-adjust: exact;
+}
+@media screen and (min-width: 914px) {
+    body {
+        width: 854px;
+        margin:10px auto;
+    }
+}
+@media print {
+	body,code,pre code,h1,h2,h3,h4,h5,h6 {
+		color: black;
+	}
+	table, pre {
+		page-break-inside: avoid;
+	}
+}
+</style>
+<title>Spuštěni</title>
+<script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax:{inlineMath:[['$$$','$$$']]}});</script><script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</head>
+<body>
+<pre><code>Mark Birger (xbirge00) 5.4.2015
+Vlastni projekt (Testovaní modulu dialogového sytému)
+Bakalářská práce: Dialogový systém pro komunikaci s reálným robotem 
+</code></pre>
+
+<h1>Spuštěni</h1>
+
+<p>Obsah balíku:</p>
+
+<pre><code>➜  ITS  tree
+.
+├── dialog_system
+│   ├── src (kompletní zdrojové soubory dialogového systému)
+│   │   ├── dialog.py
+│   │   ├── examples
+│   │   │   ├── assistant.dlg
+│   │   │   ├── demo.dlg
+│   │   │   ├── echo.dlg
+│   │   │   ├── movement.py
+│   │   │   └── tickets.dlg
+│   │   ├── link_parser.py
+│   │   ├── main_master.py
+│   │   ├── main_slave.py
+│   │   ├── parser.py
+│   │   ├── phrase.py
+│   │   ├── returns.py
+│   │   ├── scope.py
+│   │   ├── server.py
+│   │   ├── speech.py
+│   │   └── states.py
+│   └── test (testovaný modul + testy + fake moduly)
+│       ├── link_parser.py
+│       ├── phrase.py
+│       ├── scope.py
+│       └── test.py
+├── html_report (html verze reportu)
+│   ├── parse.png
+│   ├── test-report.html
+│   ├── tryfor.png
+│   └── update.png
+└── test-report.pdf
+
+5 directories, 25 files
+</code></pre>
+
+<p>Dialogový systém asi nepodaří spustit lokálně, vyžaduje spoustu Python a debian závislosti. Ted' pracuju nad vytvářením environmentu. Online možné vyzkoušet na neukončené stance tutroialu na markbirger.info/dialog.</p>
+
+<p>Spuštěni testu:</p>
+
+<pre><code>cd ./dialog_system/test
+python3 test.py
+</code></pre>
+
+<p>Vyzkoušeno na:</p>
+
+<pre><code>Python 3.4.2 (v3.4.2:ab2c023a9432, Oct  5 2014, 20:42:22)
+[GCC 4.2.1 (Apple Inc. build 5666) (dot 3)] on darwin
+</code></pre>
+
+<p>Fakticky funguje na jakémkoliv UNIXu s Python verze 3.</p>
+
+<h1>Cíl</h1>
+
+<p>Dialogový systém je mluvčí rozhání pro software. V rámci bakalářské prací píšu Framework pro vývoj dialogového systému a par přikladu dialogových systému, vyvinutých pomoci tohoto frameworku.</p>
+
+<p>Cílem je otestovat modul zpracovaní (načtení a použiti) jednotlivých frázi z popisu dialogu. Tento modul se nazývá (phrase.py).</p>
+
+<p>Popis dialogu je textový soubor, který obsahuje strom, uzly kterého jsou stavy. Příklad popisu dialogu:</p>
+
+<pre><code>Hello
+    Hello
+
+What time is it?
+    A time is `get_time`.
+
+What is your name?
+    My name is `name`
+
+Your name is `name~John` #rename the robot
+    No problems, my name is `name`
+</code></pre>
+
+<p>Na rádcích popisu dialogu jsou frázi, a speciální sekvence:</p>
+
+<ul>
+<li>substituce. Příklad: <code>name</code>. Kdy tato fráze bude mluvena/porovnávaná s vstupní frázi, provede se ta substituce na hodnotu z proměnné name.</li>
+<li>tzv. fixed setter. Příklad: <code>variable:False</code>. Kdy systém bude procházet pres tento stav (odpovídat pomoci teto frázi nebo uživatel řekne tuto frázi), nastaví se tato proměnná.</li>
+<li>tzv. flexible setter. Příklad: <code>name~John</code>. Dialogový systém využívá Link Grammar parser pro zpracovaní přirozené reci. Když uživatel řekne Your name is Paul (příklad nahoře), tak dialogový systém bude vyhledávat slovo, které má shodný vazby s ostatními slovy jako uvnitř vety Your name is John. Ve výsledku nastaví se proměnná name na hodnotu Paul.</li>
+<li>předávní hodnot a aktivitu. Příklad: <code>routine&lt;1</code>. Dialogový systém je rozhraní, a tento dialogový systém navrhnout pro využiti na robotech. Když robot jede, nemusí se blokovat dialogový systém. Proto každou aktivitu spoušti v jinem procesu. Pokud uživatel chci změnit chovaní aktivity během dialogu, musíme odesílat do spuštěných aktivit data. Když systém bude procházet přes tento stav, odešle se jednička do aktivity s názvem routine.</li>
+</ul>
+
+
+<p>Příklad kombinace sekvence:</p>
+
+<pre><code>Hello world `my_var:32` `name~John` `routine1&lt;"stop"`
+</code></pre>
+
+<p>Vstupem tohoto modulu je řetězec, obsahující jednu frázi z případnými sekvencemi. Druhym parametrem je objekt třídy Scope. Objekt třídy Scope je slovník, obsahující proměnné a funkci z oblasti globální vidomosti. Taky tento modul vyžaduje modul link_parser. Module link_parser obsahuje bindingy pro link_grammar parser (taky psal jejich sám).</p>
+
+<p>Pro tito dva moduly (scope a link_parser) v rámci testovaní jsem vytvořil náhradní moduly, který simuluji  aktivitu těchto modulu pro případy testovaní.</p>
+
+<p>V rámci testovaní chtěl bych otestovat všichni metody třídy Phrase, kritériem pokryti nejméně EC. Taky chtěl bych otestovat regulární vyraz, pro načtení sekvence.</p>
+
+<h1>Technologie</h1>
+
+<p>Cely dialogový systém je napsán v programovacím jazyce Python 3. Pro testovaní jsem rozhodoval mezi modulem <code>unittest</code> a modulem <code>doctest</code>. Oba jsou součásti balíku Python.</p>
+
+<p>Rozhodl jsem využít unittest, protože:</p>
+
+<ul>
+<li>navždy porovnávám objekty, který da se přivést na řetězec</li>
+<li>nechci ztrácet kvalitu generované dokumentaci</li>
+</ul>
+
+
+<p>unittest je výkonný framework. Kromě tradičních porovnávajících assertu, využíval jsem assertRaises pro kontrolu správních výjimek. Jediná věc, která není jasna na první pohled je pořadí spuštěni testu. Pořadí spuštěni testu je definováno podle abecedy, podle nazvu testovacích sad.</p>
+
+<h1>Metoda: Zvolené testovací kritérium</h1>
+
+<p>Pro každou metodu jsem kreslil CFG a podle jeho složitosti rozhodoval o zvoleném kritériu pokryti. Pro některý metody jsem implementoval EPC, pro ostatní, který mají rozsáhlý graph, EC.</p>
+
+<table>
+<thead>
+<tr>
+<th>Název metody </th>
+<th> Zvoleny kritérium</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><em>_init_</em> </td>
+<td> Jeden Basic Block (EPC) </td>
+</tr>
+<tr>
+<td>_parse </td>
+<td> Edge Coverage </td>
+</tr>
+<tr>
+<td>_validate </td>
+<td> Skipped (funkce jeste neimplementovana) </td>
+</tr>
+<tr>
+<td>_shift_other </td>
+<td> Edge Coverage </td>
+</tr>
+<tr>
+<td>_create_substition </td>
+<td> Jeden Basic Block (EPC) </td>
+</tr>
+<tr>
+<td>_create_fixed_setter </td>
+<td> Jeden Basic Block (EPC) </td>
+</tr>
+<tr>
+<td>_erase_fixed_setters </td>
+<td> Edge-Pair Coverage </td>
+</tr>
+<tr>
+<td>_create_flexible_setter </td>
+<td> Jeden BasicBlock (EPC) </td>
+</tr>
+<tr>
+<td>_erase_flexible_setters </td>
+<td> Edge-Pair Coverage </td>
+</tr>
+<tr>
+<td>_link_flexible_setters </td>
+<td> Edge Coverage </td>
+</tr>
+<tr>
+<td>_create_routine_request </td>
+<td> Jeden Basic Block (EPC) </td>
+</tr>
+<tr>
+<td>_erase_routine_requests </td>
+<td> Edge-Pair Coverage </td>
+</tr>
+<tr>
+<td>evaluate </td>
+<td> Edge-Pair Coverage </td>
+</tr>
+<tr>
+<td>_update_parsed </td>
+<td> Edge-Pair Coverage </td>
+</tr>
+<tr>
+<td>accept </td>
+<td> Edge Coverage </td>
+</tr>
+<tr>
+<td>compare </td>
+<td> Edge Coverage </td>
+</tr>
+<tr>
+<td><em>_str_</em>  </td>
+<td> Jeden Basic Block (EPC) </td>
+</tr>
+</tbody>
+</table>
+
+
+<p>Kromě toho, jsem otestoval regulární vyraz jiným způsobem (vice dále).</p>
+
+<h3>Poznámka: CFG pro konstrukce try/except a foreach</h3>
+
+<p>Python 3 jako programovací jazyk má vysoký úroveň abstrakce. Tento projekt využívá syntaktické konstrukci jako try/except a for (fakticky foreach). Tak jsem kreslil graphy pro tito případy:</p>
+
+<p><img src="tryfor.png" alt="image" /></p>
+
+<h1>Testovací sada: Popis testovacích případů</h1>
+
+<p>Rozdělil  jsem všichni testovací případy do několika testovacích sad podle sdílených funkci inicializaci a podle sémantiky.</p>
+
+<h3>SimpleMethods</h3>
+
+<table>
+<thead>
+<tr>
+<th>Název testovacího případu </th>
+<th> Popis testovacího případu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>test_create_substition </td>
+<td> Vložení substituce do seznamu</td>
+</tr>
+<tr>
+<td>test_create_fixed_setter </td>
+<td> Vložení fixed setteru do seznamu</td>
+</tr>
+<tr>
+<td>test_create_flexible_setter </td>
+<td> Vložení flexible setteru do seznamu</td>
+</tr>
+<tr>
+<td>test_create_routine_request </td>
+<td> Vložení předávaní hodnot aktivitě do seznamu</td>
+</tr>
+</tbody>
+</table>
+
+
+<h3>ParsingTestShifters</h3>
+
+<table>
+<thead>
+<tr>
+<th>Název testovacího případu </th>
+<th> Popis testovacího případu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>test_validate </td>
+<td> Skipped, ještě neimplementované</td>
+</tr>
+<tr>
+<td>test_shift_other </td>
+<td> Před předáváním do Link Grammar parseru odstraňujeme/vyměňujeme všichni sekvence, testovaná metoda posouvá další sekvence doleva</td>
+</tr>
+</tbody>
+</table>
+
+
+<h3>ParsingTestErasers</h3>
+
+<table>
+<thead>
+<tr>
+<th>Název testovacího případu </th>
+<th> Popis testovacího případu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>test_erase_fixed_setters </td>
+<td> Vymazaní fixed setteru</td>
+</tr>
+<tr>
+<td>test_erase_flexible_setters </td>
+<td> Vymazaní flexible setteru</td>
+</tr>
+<tr>
+<td>test_erase_routine_requests </td>
+<td> Vymazaní předávaní hodnot aktivitě</td>
+</tr>
+</tbody>
+</table>
+
+
+<h3>ParsingTest</h3>
+
+<table>
+<thead>
+<tr>
+<th>Název testovacího případu </th>
+<th> Popis testovacího případu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>test_parse_regex </td>
+<td> Speciální případ testovaní (vice dále)</td>
+</tr>
+<tr>
+<td>test_parse </td>
+<td> Testovaná hlavni metoda zpracováváni řetězců</td>
+</tr>
+</tbody>
+</table>
+
+
+<h3>UsageTest</h3>
+
+<table>
+<thead>
+<tr>
+<th>Název testovacího případu </th>
+<th> Popis testovacího případu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>test_init </td>
+<td> Test inicializace objektu fráze (komplexní metoda)</td>
+</tr>
+<tr>
+<td>test_link_flexible_setters </td>
+<td> Test provazovaní frázi a struktury z Link Grammar parseru</td>
+</tr>
+<tr>
+<td>test_evaluate </td>
+<td> Test metody, která provádí substituce a volaná, kdy robot říká odpověď</td>
+</tr>
+<tr>
+<td>test_update_parsed </td>
+<td> Test metody, která obnovuje vazby Grammar parseru v případě změny hodnot z modulu Scope</td>
+</tr>
+<tr>
+<td>test_str </td>
+<td> Test volaní str() metody</td>
+</tr>
+<tr>
+<td>test_compare </td>
+<td> Když uživatel řekne frázi, dialogový systém musí najit podobnou frázi ze množiny očekávaných frázi. Testovaná metoda vrací shodnost příchozí frázi podle struktury vety</td>
+</tr>
+<tr>
+<td>test_accept </td>
+<td> Testovaná metoda musí nastavit změny ve scope objektu a předat hodnoty v aktivity</td>
+</tr>
+</tbody>
+</table>
+
+
+<p>Vysvětleni pro test_update_parsed:</p>
+
+<pre><code>Is your name `name`?
+    Yes
+</code></pre>
+
+<p>Pokud někdo přejmenuje robota, a zeptá tuto otázku, musí se obnovit vazby NLP.</p>
+
+<h3>Testovaní regulárních výrazu</h3>
+
+<p>Je to otestovaný regulární vyraz:</p>
+
+<pre><code>`([a-zA-Z0-9_]*)((\:|\~|\&lt;)([^`]+))?`
+</code></pre>
+
+<p>Pro tento vyraz jsem nakreslil CFG, ve kterém každý kvantifikátor je if/else konstrukce. Kazda vyhledávací skupina je basic block. Pak jsem implementoval alogoritm který pomoci rekurzi generuje různý výrazy pro testovaní. Celkem jejich 723. Je to obtížné otestovat 723 případy ručně, ale mohl jsem získat tito znalosti automaticky:</p>
+
+<ul>
+<li>z 723 generovaných regulárních výrazu, 36 nepoužili žádnou sekvence (špatný hodnoty kvantifikátoru)</li>
+<li>neexistoval žádný regulární vyraz, který bych použil 3 sekvence</li>
+<li>neexistoval žádný vyraz, který použil bych 2 sekvence, pokud ani jedna z nich není substituce</li>
+<li>pokud regulární vyraz obsahuje 3 symboly `, načtena nejvíce 1 sekvence</li>
+</ul>
+
+
+<h1>Dosažené výsledky</h1>
+
+<p>Dosáhl jsem kritéria pokryti Edge Coverage na celém modulu. Je potřeba použít dekompozice, abych zjednodušit některé metody pro jednodušší testovaní. Například metoda <code>_parse</code>:</p>
+
+<p><img src="parse.png" alt="image" /></p>
+
+<p>To je příklad jednoduššího testu metody <code>_update_parsed</code> (if uvnitř try):</p>
+
+<p><img src="update.png" alt="image" /></p>
+
+<p>Ve výsledku jsem odhalil a opravil jednu chybu. Mam návrh opravy pro druhou chybu. A nejdůležitější, že jsem mnohem lepe pochopil svůj kód a metody návrhu testovacích případu.</p>
+
+<h1>Nalezené chyby/neočekávané chování</h1>
+
+<p>Během testovaní jsem nalezl 4 chyby. Reportoval jejich sám sobe :)</p>
+
+<pre><code>F.....s.......FF.F
+======================================================================
+FAIL: test_parse (__main__.ParsingTest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "test.py", line 220, in test_parse
+    self.assertEqual(phrase.latest, 'Hello value  John ')
+AssertionError: None != 'Hello value  John '
+
+======================================================================
+FAIL: test_init (__main__.UsageTest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "test.py", line 248, in test_init
+    self.assertEqual(phrase.latest, "Hello value  John ")
+AssertionError: None != 'Hello value  John '
+
+======================================================================
+FAIL: test_link_flexible_setters (__main__.UsageTest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "test.py", line 270, in test_link_flexible_setters
+    [['object1', 'word', 0, 4, 1], ['object2', 'word', 8, 12, 3]])
+AssertionError: Lists differ: [['object1', 'word', 0, 4, 3], ['object2', 'word', 8, 12, 3]] != [['object1', 'word', 0, 4, 1], ['object2', 'word', 8, 12, 3]]
+
+First differing element 0:
+['object1', 'word', 0, 4, 3]
+['object1', 'word', 0, 4, 1]
+
+- [['object1', 'word', 0, 4, 3], ['object2', 'word', 8, 12, 3]]
+?                            ^
+
++ [['object1', 'word', 0, 4, 1], ['object2', 'word', 8, 12, 3]]
+?                            ^
+
+
+======================================================================
+FAIL: test_update_parsed (__main__.UsageTest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "test.py", line 305, in test_update_parsed
+    self.assertRaises(KeyError, phrase._update_parsed)
+AssertionError: KeyError not raised by _update_parsed
+
+----------------------------------------------------------------------
+Ran 18 tests in 0.012s
+
+FAILED (failures=4, skipped=1)
+</code></pre>
+
+<p>První a druha selhaní (test_parse, test_init) testovacího případu ovlivněny jednou chybou uvnitř <strong>init</strong> metody. Definoval jsem atributy třídy až po volaní metody, která měnila tyto atributy. Podařilo se tuto chybu rychle opravit.</p>
+
+<p>Třetí selhaní (test_link_flexible_setters) testovacího případu potvrdilo očekávaný problém v případě načtení dvou flexibilních setteru ze stejného slova. Například:</p>
+
+<pre><code>`object1~word` is `object2~word`
+</code></pre>
+
+<p>První slovo v tomto případě taky bude mít vazbu s třetím slovem word. Systém nerozlisuje dva stejných slova uvnitř konstrukce, vracené od parseru přirozeného jazyku. Je to algoritmická chyba. Dosud není opravena.</p>
+
+<p>Čtvrtá chyba je neočekávané chovaní, které způsobeno tím, ze dialogový systém ještě ve fázi vývojů, a výjimka v příštích verzi bude zpracovávaná na fázi porovnaní fráze.</p>
+</body>
+</html>

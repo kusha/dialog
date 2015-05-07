@@ -1,4 +1,7 @@
 __*
-temporary/*
+data/*
+*.wav
+*.mp3
+__pycache__
 *.pyc
-nlp_cache.db
+*.db

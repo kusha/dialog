@@ -1,7 +1,11 @@
 __*
 data/*
+tmp/*
+env/
+link-grammar-*
 *.wav
 *.mp3
 __pycache__
 *.pyc
 *.db
+.lg_history

@@ -7,4 +7,7 @@ setup(name='dialog',
       author='Mark Birger',
       author_email='xbirge00@stud.fit.vutbr.cz',
       license='MIT',
+      entry_points = {
+        'console_scripts': ['dialog_system=dialog.interpreter:run_master'],
+	  },
       packages=['dialog'])

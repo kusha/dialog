@@ -315,5 +315,10 @@ def handle(callbacks, before=lambda scope: None, after=lambda scope: None):
         return inner
     return decorator
 
+def run_master():
+    print("TODO run master mode")
+
 if __name__ == "__main__":
-    pass
+    run_master()
+
+    

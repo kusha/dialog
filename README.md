@@ -63,8 +63,7 @@ Make sure, that you have a Python3 and `pip3` and/or `easy_install-3.x` installe
 
 It's possible to create virtual environment with python dependencies. Make sure, that you have `pyvenv-3.4`. Only this version of `pyvenv` works great with `pip3` (proof: https://robinwinslow.co.uk/2013/12/26/python-3-4-virtual-environment/).
 
-	bash ./init.sh
-	source env/bin/activate
+	. ./init.sh
 
 `init.sh` file creates virtual environment, downloads and compiles Link Grammar Parser. 
 

@@ -1,5 +1,6 @@
 #!/bin/bash
 pyvenv-3.4 env
+source env/bin/activate
 pip3 install ./
 easy_install-3.4 pyaudio
 pip3 install execnet

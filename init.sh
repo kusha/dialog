@@ -1,5 +1,8 @@
 #!/bin/bash
-pyvenv-3.4 env
+pyvenv-3.4 --without-pip env
+source ./env/bin/activate
+curl https://bootstrap.pypa.io/get-pip.py -o - | python3
+deactivate
 source env/bin/activate
 pip3 install ./
 easy_install-3.4 pyaudio

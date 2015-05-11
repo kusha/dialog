@@ -71,7 +71,7 @@ class Dialog:
         """
         Symlink for start_text().
         """
-        print("Dialog system started in text mode by deafult.")
+        print("Dialog system started in text mode by default.")
         return self.start_text()
 
     def start_spoken(self):

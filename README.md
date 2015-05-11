@@ -78,6 +78,10 @@ After, you can run examples
 To leave a virtual environment:
 
 	deactivate
+
+To activate an environment again:
+
+	source env/bin/activate
 	
 To leave and delete a virtual environment:
 

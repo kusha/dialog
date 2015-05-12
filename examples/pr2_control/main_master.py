@@ -50,15 +50,15 @@ def fucnt():
     return i
 
 # functions definition
-def stop_movement(scope):
+def stop_movement(scope, responses):
     scope.stop_flag = True
     print("*stop movement*")
 
-def continue_movement(scope):
+def continue_movement(scope, responses):
     scope.stop_flag = False
     print("*continuing movement*")
 
-def revert_movement(scope):
+def revert_movement(scope, responses):
     scope.stop_flag = False
     scope.step = -1
     print("*move back*")
@@ -69,13 +69,13 @@ callbacks = {
     "back": revert_movement,
 }
 
-def before(scope):
+def before(scope, responses):
     scope.stop_flag = False
     scope.pos = 0
     scope.step = 1
     print("*calculating trajectory*")
 
-def after(scope):
+def after(scope, responses):
     print("*disabling motors*")
 
 @handle(callbacks, before=before, after=after)

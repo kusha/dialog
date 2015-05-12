@@ -61,7 +61,11 @@ Make sure, that you have a Python3 and `pip3` and/or `easy_install-3.x` installe
 
 	sudo apt-get install python3-setuptools python3.4-dev python3-pip
 
-It's possible to create virtual environment with python dependencies. Make sure, that you have `pyvenv-3.4`. Only this version of `pyvenv` works great with `pip3` (proof: https://robinwinslow.co.uk/2013/12/26/python-3-4-virtual-environment/).
+It's possible to create a virtual environment with python dependencies. Make sure, that you have `pyvenv-3.4`. Only this version of `pyvenv` works great with `pip3` (proof: https://robinwinslow.co.uk/2013/12/26/python-3-4-virtual-environment/). To check, if `pyvenv-3.4` is installed:
+
+	which pyvenv-3.4
+
+You should see a path to executable. If it's available, you can run initialization script:
 
 	. ./init.sh
 

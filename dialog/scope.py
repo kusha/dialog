@@ -15,6 +15,7 @@ class Scope:
     Visible in dialog.
     """
     def __init__(self, scope):
+        self.globals = scope
         self.scope = {}
         for name, obj in scope.items():
             if not name.startswith('__') and name != "Dialog":
@@ -41,6 +42,7 @@ class Scope:
         for key, value in variables.items():
             print("\t" + key, "<=", value)
         self.scope.update(variables)
+        self.globals.update(variables)
 
     def parallel(self, name, return_queue):
         """

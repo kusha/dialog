@@ -1,4 +1,10 @@
-__*
-temporary/*
+data/*
+tmp/*
+env/
+link-grammar-*
+*.wav
+*.mp3
+__pycache__
 *.pyc
-nlp_cache.db
+*.db
+.lg_history

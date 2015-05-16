@@ -209,20 +209,12 @@ class Phrase:
         """
         Compares input phrase with this phrase
         """
-        subs_input = link_parser.substitute(input_phrase)
+        # subs_input = link_parser.substitute(input_phrase)
         self._update_parsed()
-        subs_self = link_parser.substitute(self.parsed)
-        similarity = 0
-        for link1 in subs_self:
-            for link2 in subs_input:
-                # print(link1, "\t" , link2)
-                if link1 == link2:
-                    similarity += 1
-        # TODO: understand why it is problem here
-        if len(subs_self) != 0:
-            similarity = similarity/len(subs_self)
-        else:
-            similarity = 0
+        # subs_self = link_parser.substitute(self.parsed)
+        # similarity = 0
+        flexibles_ids = [flex[4] for flex in self.flexibles]
+        similarity = link_parser.compare(flexibles_ids, self.parsed, input_phrase)
         # rejection of phrase in case of invalid parsing
         rejection = []
         for setter in self.flexibles:

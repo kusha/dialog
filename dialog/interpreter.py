@@ -81,7 +81,7 @@ class Dialog:
         for state in self.expected:
             # print(state, state.compare(input_phrase))
             states_probability.append((state, state.compare(input_phrase)))
-        states_probability = sorted(states_probability, key=lambda x: x[1][0], reverse=True)
+        states_probability = sorted(states_probability, key=lambda x: (x[1][0][0], x[1][0][1]), reverse=True)
         allowed_states_probability = []
         no_separator = True
         print("======")
@@ -90,16 +90,16 @@ class Dialog:
                 rejected = "R"
                 due = "(%s)" % state[1][1][0]
             else:
-                rejected = ""
+                rejected = " "
                 due = ""
                 allowed_states_probability.append(state)
-            if no_separator and state[1][0] < THRESHOLD:
+            if no_separator and state[1][0][0] < THRESHOLD:
                 no_separator = False
                 print("------")
-            print("%.2f %s\t%s %s" % (state[1][0], rejected, state[0], due))
+            print("%.2f [%i] %s  %s %s" % (state[1][0][0], state[1][0][1], rejected, state[0], due))
         print("======")
         if not len(allowed_states_probability) or \
-            allowed_states_probability[0][1][0] < THRESHOLD:
+            allowed_states_probability[0][1][0][0] < THRESHOLD:
             print("Bot> ???")
             return None
         return allowed_states_probability[0][0]
@@ -127,7 +127,7 @@ class Dialog:
         occupation.set()
         print("======")
         for state in self.expected:
-            print("\t%s" % (state))
+            print("\t    %s" % (state))
         print("======")
         while True:
             # process routines answers
@@ -156,7 +156,7 @@ class Dialog:
         """
         print("======")
         for state in self.expected:
-            print("\t%s" % (state))
+            print("\t    %s" % (state))
         print("======")
         while True:
             # process routines answers
@@ -210,7 +210,7 @@ class Dialog:
 
         print("======")
         for state in self.expected:
-            print("\t%s" % (state))
+            print("\t    %s" % (state))
         print("======")
         while True:
             # process routines answers

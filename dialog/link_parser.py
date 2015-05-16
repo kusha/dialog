@@ -51,6 +51,33 @@ def parse(string):
 def generalize_link(link_type):
     return re.findall(r"^[A-Z]*", link_type)[0]
 
+def compare(flexibles, sentence_self, sentence_input):
+    # print(sentence_self)
+    # print(sentence_input)
+    # print(flexibles)
+    subs_self = substitute(sentence_self, flexibles)
+    subs_input = substitute(sentence_input)
+    # print(subs_self)
+    # print(subs_input)
+    equal_links = 0
+    for link1 in subs_self:
+        for link2 in subs_input:
+                # if link1[0] in link2[0] and \
+                    # link1[1] in link2[1] and \
+
+                if bool(re.search(link1[0], link2[0])) and \
+                    bool(re.search(link1[1], link2[1])) and \
+                    link1[2] == link2[2]:
+                    # print(link1, "\t", link2)
+                    equal_links += 1
+    # TODO: understand why it is problem here
+    if len(subs_self) != 0:
+        # print(similarity, len(subs_self), len(subs_input))
+        similarity = equal_links/len(subs_self)
+    else:
+        similarity = 0
+    return similarity, equal_links
+
 def word_links(idx, sentence):
     important = []
     for link in sentence["links"]:
@@ -63,6 +90,7 @@ def word_links(idx, sentence):
             copy[1] = None
         else:
             continue
+        # copy[2] = generalize_link(copy[2])
         important.append(copy)
     return important    
 
@@ -85,11 +113,18 @@ def extract(idx, sentence1, sentence2):
             result = re.findall(r"\w+", sentence2["words"][word])[0]
             return result
 
-def substitute(sentence):
+def substitute(sentence, clean=[]):
+    words_wo_flex = sentence["words"][:]
+    for idx in clean:
+        pos_tag = re.findall(r"\..*$", words_wo_flex[idx])
+        if len(pos_tag):
+            words_wo_flex[idx] = pos_tag[0]
+        else:
+            words_wo_flex[idx] = "^[^.]*$"
     result = []
     for link in sentence["links"]:
-        first = sentence["words"][link[0]]
-        second = sentence["words"][link[1]]
+        first = words_wo_flex[link[0]]
+        second = words_wo_flex[link[1]]
         result.append([first, second, link[2]])
     return result
 

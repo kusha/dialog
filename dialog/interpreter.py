@@ -83,6 +83,7 @@ class Dialog:
             states_probability.append((state, state.compare(input_phrase)))
         states_probability = sorted(states_probability, key=lambda x: x[1][0], reverse=True)
         allowed_states_probability = []
+        no_separator = True
         print("======")
         for state in states_probability:
             if len(state[1][1]):
@@ -92,6 +93,9 @@ class Dialog:
                 rejected = ""
                 due = ""
                 allowed_states_probability.append(state)
+            if no_separator and state[1][0] < THRESHOLD:
+                no_separator = False
+                print("------")
             print("%.2f %s\t%s %s" % (state[1][0], rejected, state[0], due))
         print("======")
         if not len(allowed_states_probability) or \

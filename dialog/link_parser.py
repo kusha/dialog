@@ -47,6 +47,9 @@ def parse(string):
     cache[string] = result
     return result
 
+def generalize_link(link_type):
+    return re.findall(r"^[A-Z]*", link_type)[0]
+
 def word_links(idx, sentence):
     important = []
     for link in sentence["links"]:
@@ -59,6 +62,7 @@ def word_links(idx, sentence):
             copy[1] = None
         else:
             continue
+        copy[2] = generalize_link(copy[2])
         important.append(copy)
     return important    
 

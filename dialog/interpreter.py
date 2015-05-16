@@ -26,6 +26,8 @@ from socket import *
 # USE_EVAL = False
 # TTS = "att"
 
+THRESHOLD = 0.2
+
 class Dialog:
     """
     Dialog interperter class.
@@ -74,6 +76,30 @@ class Dialog:
         print("Dialog system started in text mode by default.")
         return self.start_text()
 
+    def interpret(self, input_phrase):
+        states_probability = []
+        for state in self.expected:
+            # print(state, state.compare(input_phrase))
+            states_probability.append((state, state.compare(input_phrase)))
+        states_probability = sorted(states_probability, key=lambda x: x[1][0], reverse=True)
+        allowed_states_probability = []
+        print("======")
+        for state in states_probability:
+            if len(state[1][1]):
+                rejected = "R"
+                due = "(%s)" % state[1][1][0]
+            else:
+                rejected = ""
+                due = ""
+                allowed_states_probability.append(state)
+            print("%.2f %s\t%s %s" % (state[1][0], rejected, state[0], due))
+        print("======")
+        if not len(allowed_states_probability) or \
+            allowed_states_probability[0][1][0] < THRESHOLD:
+            print("Bot> ???")
+            return None
+        return allowed_states_probability[0][0]
+
     def start_spoken(self):
         """
         Interprets dialog with natural speech.
@@ -111,20 +137,9 @@ class Dialog:
             if not listener_queue.empty():
                 input_phrase = listener_queue.get()
                 input_phrase = link_parser.parse(input_phrase)
-                states_probability = []
-                for state in self.expected:
-                    # print(state, state.compare(input_phrase))
-                    states_probability.append((state, state.compare(input_phrase)))
-                states_probability = sorted(states_probability, key=lambda x: x[1], reverse=True)
-                print("======")
-                for state in states_probability:
-                    print("%.2f\t%s" % (state[1], state[0]))
-                print("======")
-                state = states_probability[0][0]
-                if states_probability[0][1] < 0.2:
-                    print("Bot> ???")
-                else:
-                    tosay, questions = state.accept(input_phrase)
+                state = self.interpret(input_phrase)
+                if state:
+                    tosay, questions = state[0].accept(input_phrase)
                     for answer in tosay:
                         if answer != "":
                             speaker_queue.put(answer)
@@ -152,19 +167,8 @@ class Dialog:
                 print("Empty input string")
                 input_phrase = input("You> ")
             input_phrase = link_parser.parse(input_phrase)
-            states_probability = []
-            for state in self.expected:
-                # print(state, state.compare(input_phrase))
-                states_probability.append((state, state.compare(input_phrase)))
-            states_probability = sorted(states_probability, key=lambda x: x[1], reverse=True)
-            print("======")
-            for state in states_probability:
-                print("%.2f\t%s" % (state[1], state[0]))
-            print("======")
-            state = states_probability[0][0]
-            if states_probability[0][1] < 0.2:
-                print("Bot> ???")
-            else:
+            state = self.interpret(input_phrase)
+            if state:
                 tosay, questions = state.accept(input_phrase)
                 for answer in tosay:
                     if answer != "":
@@ -220,19 +224,8 @@ class Dialog:
                 print("Empty input string")
                 input_phrase = input("You> ")
             input_phrase = link_parser.parse(input_phrase)
-            states_probability = []
-            for state in self.expected:
-                # print(state, state.compare(input_phrase))
-                states_probability.append((state, state.compare(input_phrase)))
-            states_probability = sorted(states_probability, key=lambda x: x[1], reverse=True)
-            print("======")
-            for state in states_probability:
-                print("%.2f\t%s" % (state[1], state[0]))
-            print("======")
-            state = states_probability[0][0]
-            if states_probability[0][1] < 0.2:
-                print("Bot> ???")
-            else:
+            state = self.interpret(input_phrase)
+            if state:
                 tosay, questions = state.accept(input_phrase)
                 for answer in tosay:
                     if answer != "":

@@ -222,7 +222,13 @@ class Phrase:
             similarity = similarity/len(subs_self)
         else:
             similarity = 0
-        return similarity
+        # rejection of phrase in case of invalid parsing
+        rejection = []
+        for setter in self.flexibles:
+            if link_parser.extract(setter[4], self.parsed, input_phrase) is None:
+                rejection = [setter[0]]
+                break
+        return similarity, rejection
 
     def __str__(self):
         return self.evaluate()

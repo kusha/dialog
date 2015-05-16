@@ -215,6 +215,7 @@ class Phrase:
         similarity = 0
         for link1 in subs_self:
             for link2 in subs_input:
+                # print(link1, "\t" , link2)
                 if link1 == link2:
                     similarity += 1
         # TODO: understand why it is problem here

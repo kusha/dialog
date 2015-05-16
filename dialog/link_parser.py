@@ -43,6 +43,7 @@ def parse(string):
         del link[0]
         link[0] = int(link[0])
         link[1] = int(link[1])
+        link[2] = generalize_link(link[2])
         result["links"].append(link)
     cache[string] = result
     return result
@@ -62,7 +63,6 @@ def word_links(idx, sentence):
             copy[1] = None
         else:
             continue
-        copy[2] = generalize_link(copy[2])
         important.append(copy)
     return important    
 
@@ -70,9 +70,12 @@ def extract(idx, sentence1, sentence2):
     """
     Extracts word from sentence with similar structure.
     """
+    # print(idx, sentence1, sentence2)
     important = word_links(idx, sentence1)
+    # print(important)
     for word in range(len(sentence2["words"])):
         links = word_links(word, sentence2)
+        # print(word, links)
         needed = important[:]
         for link in links:
             if link in needed:

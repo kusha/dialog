@@ -12,7 +12,6 @@ from dialog import STORAGEPATH
 from dialog.parser import Parser
 from dialog.scope import Scope
 from dialog.returns import Returns
-import dialog.speech as speech
 import dialog.link_parser as link_parser
 
 import multiprocessing
@@ -108,6 +107,7 @@ class Dialog:
         """
         Interprets dialog with natural speech.
         """
+        import dialog.speech as speech
         occupation = multiprocessing.Event()
         listener_queue = multiprocessing.Queue(maxsize=0)
         recognizer_queue = multiprocessing.Queue(maxsize=0)

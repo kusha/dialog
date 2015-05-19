@@ -64,10 +64,14 @@ def compare(flexibles, sentence_self, sentence_input):
         for link2 in subs_input:
                 # if link1[0] in link2[0] and \
                     # link1[1] in link2[1] and \
-
-                if bool(re.search(link1[0], link2[0])) and \
-                    bool(re.search(link1[1], link2[1])) and \
+                # print(subs_self, subs_input)
+                # print(link1[0], link2[0])
+                # print(link1[1], link2[1])
+                # print(link1[2], link2[2])
+                if (link1[0][0] in link2[0][0]) == link1[0][1]  and \
+                    (link1[1][0] in link2[1][0]) == link1[1][1] and \
                     link1[2] == link2[2]:
+                    # print("OK")
                     # print(link1, "\t", link2)
                     equal_links += 1
     # TODO: understand why it is problem here
@@ -114,13 +118,14 @@ def extract(idx, sentence1, sentence2):
             return result
 
 def substitute(sentence, clean=[]):
-    words_wo_flex = sentence["words"][:]
+    words_wo_flex = [[word, True] for word in sentence["words"]]
     for idx in clean:
-        pos_tag = re.findall(r"\..*$", words_wo_flex[idx])
+        pos_tag = re.findall(r"\..*$", words_wo_flex[idx][0])
         if len(pos_tag):
-            words_wo_flex[idx] = pos_tag[0]
+            words_wo_flex[idx][0] = pos_tag[0]
         else:
-            words_wo_flex[idx] = "^[^.]*$"
+            words_wo_flex[idx][0] = "."
+            words_wo_flex[idx][1] = False
     result = []
     for link in sentence["links"]:
         first = words_wo_flex[link[0]]

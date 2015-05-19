@@ -143,7 +143,7 @@ class Dialog:
                 input_phrase = link_parser.parse(input_phrase)
                 state = self.interpret(input_phrase)
                 if state:
-                    tosay, questions = state[0].accept(input_phrase)
+                    tosay, questions = state.accept(input_phrase)
                     for answer in tosay:
                         if answer != "":
                             speaker_queue.put(answer)
@@ -300,15 +300,50 @@ def run_master():
         action='version',
         version='%(prog)s '+__version__)
     parser.add_argument(
-        '-s',
         '--spoken', 
         action='store_true',
         required=False, 
         help='run as a spoken dialog system',
         dest='is_spoken')
-    self.options = vars(parser.parse_args())
-    # print(self.options)
-    print("TODO run master mode")
+    parser.add_argument(
+        '-s',
+        '--scripts',
+        metavar='PY',
+        default=[],
+        nargs='+',
+        help='Python scripts')
+    parser.add_argument(
+        '-d',
+        '--dialogs',
+        metavar='DLG',
+        default=[],
+        nargs='+',
+        help='dialog descriptions')
+    options = vars(parser.parse_args())
+    # print(options)
+    print("Slave mode uses exec() function! \
+        \nYou can wipe your data inside of your scripts. \
+        \nScripts from the parameters will be evaluated.")
+    if input("Continue? [y/n]: ") != "y":
+        print("aborted")
+        sys.exit(0)
+    scope = {}
+    for filename in options['scripts']:
+        try:
+            content = open(filename, "rb").read().decode("utf-8")
+        except FileNotFoundError:
+            print("Can't find", filename)
+            sys.exit(0)
+        exec(content, scope)
+    del scope["__builtins__"]
+    # print(scope)
+    dialog_instance = Dialog(scope)
+    for filename in options['dialogs']:
+        dialog_instance.load(filename)
+    if options["is_spoken"]:
+        dialog_instance.start_spoken()
+    else:
+        dialog_instance.start_text()
 
 if __name__ == "__main__":
     run_master()

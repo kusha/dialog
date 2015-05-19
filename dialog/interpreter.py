@@ -168,7 +168,14 @@ class Dialog:
             # process input
             input_phrase = input("You> ")
             while not input_phrase.strip():
-                print("Empty input string")
+                # print("Empty input string")
+                # process routines second time! duplex tests
+                answers = self.returns.get_returns()
+                # print(answers)
+                for answer in answers:
+                    tosay, questions = answer.accept()
+                    print("Bot> "+tosay)
+                    self._extend_expected(questions)
                 input_phrase = input("You> ")
             input_phrase = link_parser.parse(input_phrase)
             state = self.interpret(input_phrase)

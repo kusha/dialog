@@ -90,4 +90,4 @@ class Scope:
             pass
             #TODO: create error raising
         for each in to_delete:
-            del self.processes[each]
+            del self.routines[each]

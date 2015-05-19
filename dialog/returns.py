@@ -31,20 +31,20 @@ class Returns:
         For each routine, get indexes of returns.
         Reuturns every "return" statements.
         """
+        # print("GETTING RETURNS", self.routines)
         answers = []
         for routine in self.routines:
             while not routine["queue"].empty():
                 answer_idx = routine["queue"].get()
                 answers.append(routine["answers"][answer_idx])
         to_delete = []
-        for name, routine in self.processes.items():
-            if routine["process"].is_alive():
-                while not routine["responses_queue"].empty():
-                    response = routine["responses_queue"].get()
-                    for idx, case in enumerate(routine["cases"][0]):
-                        if case == response:
-                            answers.append(routine["cases"][1][idx])
-            else:
+        for name, routine in self.processes.items():        
+            while not routine["responses_queue"].empty():
+                response = routine["responses_queue"].get()
+                for idx, case in enumerate(routine["cases"][0]):
+                    if case == response:
+                        answers.append(routine["cases"][1][idx])
+            if not routine["process"].is_alive():
                 # TODO: check how it is safety from his child states
                 to_delete.append(name)
         for each in to_delete:

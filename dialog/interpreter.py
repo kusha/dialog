@@ -250,7 +250,7 @@ class Dialog:
         print("INFO: dialog system process is closed")
         sys.exit(0)
 
-def handle(callbacks, before=lambda scope: None, after=lambda scope: None):
+def handle(callbacks, before=lambda scope, responses: None, after=lambda scope, responses: None):
     """
     Decorator wrapper, which wraps duplex routine.
     Recives decorator params (callbacks).

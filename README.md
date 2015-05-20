@@ -89,7 +89,7 @@ To activate an environment again:
 	
 To leave and delete a virtual environment:
 
-	bash clean.sh
+	. ./clean.sh
 	
 ## Custom installation
 
@@ -112,7 +112,7 @@ To uninstall this package:
 	
 This DS framework use Link Grammar parser for natural language processing. You can install Link Grammar parser from the aptitude:
 
-	sudo apt-get install link-parser
+	sudo apt-get install link-grammar
 	
 Another option is to compile from sources: http://www.abisource.com/projects/link-grammar/#download. DS tested with 5.2.5 version.
 	
@@ -153,7 +153,7 @@ In `examples` directory you can find a few usage examples:
 
 - **features_demo** uses all DS framework features
 - **pr2_control** allows to control PR2 robot
-- **web_inteface** implements the same as a features_demo, but for slave activity code execution
+- **slave_mode** implements the same as a features_demo, but for slave activity code execution
 
 ## PR2 implementation
 
@@ -189,6 +189,11 @@ Run your ROS hydro or connect to robodev1.fit.vutbr.cz server with this instruct
 You should see a PR2 robot inside of the simulation. Then you can run your Python code from anywhere.
 
 ## Other stuff
+
+To run from the command line:
+
+	dialog_system -s examples/web_interface/test_slave.py -d examples/web_interface/test_slave.dlg --spoken
+	dialog_system -s code1.py code2.py -d dialog1.dlg dialog2.dlg --spoken
 
 To generate a modules graph:
 

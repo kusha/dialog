@@ -1,0 +1,32 @@
+hello	
+	hello, user
+move `movement_way~straight` for `move_time~2` seconds
+	ok, moving `movement_way` for `move_time` seconds
+	`movement?!`
+		>'finished'
+			i'm done
+		>'failed'
+			i cant move `movement_way`
+		stop
+			okay `count<"stop"` 
+		continue
+			okay `count<"continue"` 
+
+turn to the `turn_way~left`
+	ok, turning `turn_way`
+	`turn?`
+		"failure"
+			sorry, i can't turn to the `look_way`
+		"success"
+			i'm done
+take a picture
+	wait a second
+	`picture?`
+		"success"
+			ok, i've got a picture
+look to the `look_way~left`
+	`look?`
+		"failure"
+			sorry, i can't look to the `look_way`
+		"success"
+			ok, looking to the `look_way`

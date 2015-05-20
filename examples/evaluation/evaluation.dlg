@@ -1,0 +1,6 @@
+make `target~me` a `object_name~coffee`
+	Ok, i'm going to make `target` a `object_name`
+make a `object_name~coffee`
+	Ok, i'll just make a `object_name`
+I want `object_name~coffee`
+	I give you `object_name`

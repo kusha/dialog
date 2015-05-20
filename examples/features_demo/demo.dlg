@@ -2,6 +2,7 @@ Hello
 Hi
 	Hello
 
+What about a time?
 What time is it?
 	A time is `get_time`.
 
@@ -13,7 +14,7 @@ Your name is `name~John`
 
 You're stupid `angry:True`
 	I'm not
-		Sorry `angry:False`
+		I am sorry `angry:False`
 
 I am angry?
 	`is_angry`
@@ -45,11 +46,11 @@ make me a coffee
 count
 	okay let's count
 	i do like to count with 7 step
+	you can test this only in spoken mode
+	text input blocks routine queues checker
 	`count?!`
-		>'report'
-			`value`
 		>'half'
-			i't is quite large number
+			it is quite large number
 		>'finished'
 			i'm done
 		>'reverted'

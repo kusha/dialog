@@ -35,11 +35,15 @@
       <div class="highlight"><pre><span class="n">__author__</span> <span class="o">=</span> <span class="s">&quot;Mark Birger&quot;</span>
 <span class="n">__date__</span> <span class="o">=</span> <span class="s">&quot;1 Jan 2015&quot;</span>
 
+<span class="kn">from</span> <span class="nn">dialog</span> <span class="kn">import</span> <span class="n">STORAGEPATH</span>
+
 <span class="kn">import</span> <span class="nn">subprocess</span><span class="o">,</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">json</span><span class="o">,</span> <span class="nn">urllib.request</span>
 <span class="kn">from</span> <span class="nn">urllib.parse</span> <span class="kn">import</span> <span class="n">quote</span>
 
 <span class="kn">import</span> <span class="nn">pyaudio</span><span class="o">,</span> <span class="nn">wave</span><span class="o">,</span> <span class="nn">math</span><span class="o">,</span> <span class="nn">audioop</span><span class="o">,</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">deque</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
 
 <span class="n">ATT_API_TOKEN</span> <span class="o">=</span> <span class="s">&quot;BF-ACSI~2~20150313232123~gFirQv6InqBTx9bkWEc3fMpBApKDZKk0&quot;</span></pre></div>
     </div>
@@ -78,7 +82,7 @@ def get_att_token():
       <p>TTS engine process by AT&amp;T.</p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre><span class="k">def</span> <span class="nf">speaker</span><span class="p">(</span><span class="n">occupation</span><span class="p">,</span> <span class="n">tosay</span><span class="p">):</span></pre></div>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">speaker_ATT</span><span class="p">(</span><span class="n">occupation</span><span class="p">,</span> <span class="n">tosay</span><span class="p">):</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -131,7 +135,8 @@ def get_att_token():
         response = urllib.request.urlopen(req)</p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre>        <span class="n">filename</span> <span class="o">=</span> <span class="s">&#39;temporary/answer_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()))</span>
+      <div class="highlight"><pre>        <span class="k">global</span> <span class="n">STORAGEPATH</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">STORAGEPATH</span> <span class="o">+</span> <span class="s">&#39;/answers/answer_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()))</span>
         <span class="n">output</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s">&#39;wb&#39;</span><span class="p">)</span>
         <span class="n">output</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
         <span class="n">output</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -182,7 +187,7 @@ os.remove(filename)</p>
       <p>TTS engine process.</p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre><span class="k">def</span> <span class="nf">speaker_google</span><span class="p">(</span><span class="n">occupation</span><span class="p">,</span> <span class="n">tosay</span><span class="p">):</span></pre></div>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">speaker</span><span class="p">(</span><span class="n">occupation</span><span class="p">,</span> <span class="n">tosay</span><span class="p">):</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -218,8 +223,13 @@ os.remove(filename)</p>
 <span class="s">                Chrome/35.0.1916.47 Safari/537.36&#39;</span>
             <span class="p">}</span>
         <span class="p">)</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
-        <span class="n">filename</span> <span class="o">=</span> <span class="s">&#39;temporary/answer_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()))</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">urllib</span><span class="o">.</span><span class="n">error</span><span class="o">.</span><span class="n">HTTPError</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&quot;ERROR: HTTP error during request to TTS engine&quot;</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">global</span> <span class="n">STORAGEPATH</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">STORAGEPATH</span> <span class="o">+</span> <span class="s">&#39;/answers/answer_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()))</span> <span class="o">+</span> <span class="s">&#39;.mp3&#39;</span>
         <span class="n">output</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s">&#39;wb&#39;</span><span class="p">)</span>
         <span class="n">output</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
         <span class="n">output</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -540,7 +550,7 @@ TODO: find another way to fix it</p>
       
     </div>
     <div class='code'>
-      <div class="highlight"><pre><span class="k">def</span> <span class="nf">recognizer</span><span class="p">(</span><span class="n">recognizer_queue</span><span class="p">,</span> <span class="n">listener_queue</span><span class="p">):</span>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">recognizer_att</span><span class="p">(</span><span class="n">recognizer_queue</span><span class="p">,</span> <span class="n">listener_queue</span><span class="p">):</span>
     <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
         <span class="n">data</span><span class="p">,</span> <span class="n">sample_size</span><span class="p">,</span> <span class="n">rate</span> <span class="o">=</span> <span class="n">recognizer_queue</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
 
@@ -600,7 +610,7 @@ TODO: find another way to fix it</p>
       
     </div>
     <div class='code'>
-      <div class="highlight"><pre><span class="k">def</span> <span class="nf">recognizer_google</span><span class="p">(</span><span class="n">recognizer_queue</span><span class="p">,</span> <span class="n">listener_queue</span><span class="p">):</span>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">recognizer</span><span class="p">(</span><span class="n">recognizer_queue</span><span class="p">,</span> <span class="n">listener_queue</span><span class="p">):</span>
     <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
         <span class="n">data</span><span class="p">,</span> <span class="n">sample_size</span><span class="p">,</span> <span class="n">rate</span> <span class="o">=</span> <span class="n">recognizer_queue</span><span class="o">.</span><span class="n">get</span><span class="p">()</span></pre></div>
     </div>
@@ -614,7 +624,8 @@ TODO: find another way to fix it</p>
       <p>save to wav file</p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre>        <span class="n">filename</span> <span class="o">=</span> <span class="s">&#39;temporary/question_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()))</span>
+      <div class="highlight"><pre>        <span class="k">global</span> <span class="n">STORAGEPATH</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">STORAGEPATH</span> <span class="o">+</span> <span class="s">&#39;/questions/question_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()))</span>
         <span class="n">wav_file</span> <span class="o">=</span> <span class="n">wave</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="o">+</span><span class="s">&#39;.wav&#39;</span><span class="p">,</span> <span class="s">&#39;wb&#39;</span><span class="p">)</span>
         <span class="n">wav_file</span><span class="o">.</span><span class="n">setnchannels</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">wav_file</span><span class="o">.</span><span class="n">setsampwidth</span><span class="p">(</span><span class="n">sample_size</span><span class="p">)</span>
@@ -648,9 +659,7 @@ TODO: find another way to fix it</p>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-38'>#</a>
       </div>
-      <p>TODO: clear questions database
-os.remove(filename)
-recognize text</p>
+      <p>recognize text</p>
     </div>
     <div class='code'>
       <div class="highlight"><pre>        <span class="n">flac_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="o">+</span><span class="s">&#39;.flac&#39;</span><span class="p">,</span> <span class="s">&#39;rb&#39;</span><span class="p">)</span>
@@ -663,10 +672,14 @@ recognize text</p>
             <span class="n">headers</span><span class="o">=</span><span class="p">{</span>
                 <span class="s">&quot;User-Agent&quot;</span><span class="p">:</span> <span class="s">&quot;Mozilla/5.0 (X11; Linux i686) Apple</span><span class="se">\</span>
 <span class="s">WebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.63 Safari/535.7&quot;</span><span class="p">,</span>
-                <span class="s">&#39;Content-type&#39;</span><span class="p">:</span> <span class="s">&#39;audio/x-flac; rate=44100&#39;</span>
+                <span class="s">&#39;Content-type&#39;</span><span class="p">:</span> <span class="s">&#39;audio/x-flac; rate=16000&#39;</span>
             <span class="p">}</span>
         <span class="p">)</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">urllib</span><span class="o">.</span><span class="n">error</span><span class="o">.</span><span class="n">HTTPError</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&quot;ERROR: HTTP error during request to STT engine&quot;</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">filename</span><span class="o">+</span><span class="s">&#39;.flac&#39;</span><span class="p">)</span>
         <span class="n">response</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s">&#39;utf-8&#39;</span><span class="p">)</span>
         <span class="n">response</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>

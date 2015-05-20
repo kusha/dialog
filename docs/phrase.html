@@ -531,17 +531,10 @@ More acceptable for questions.</p>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-34'>#</a>
       </div>
-      
+      <p>subs_input = link_parser.substitute(input_phrase)</p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre>        <span class="n">subs_input</span> <span class="o">=</span> <span class="n">link_parser</span><span class="o">.</span><span class="n">substitute</span><span class="p">(</span><span class="n">input_phrase</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_update_parsed</span><span class="p">()</span>
-        <span class="n">subs_self</span> <span class="o">=</span> <span class="n">link_parser</span><span class="o">.</span><span class="n">substitute</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parsed</span><span class="p">)</span>
-        <span class="n">similarity</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">for</span> <span class="n">link1</span> <span class="ow">in</span> <span class="n">subs_self</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">link2</span> <span class="ow">in</span> <span class="n">subs_input</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">link1</span> <span class="o">==</span> <span class="n">link2</span><span class="p">:</span>
-                    <span class="n">similarity</span> <span class="o">+=</span> <span class="mi">1</span></pre></div>
+      <div class="highlight"><pre>        <span class="bp">self</span><span class="o">.</span><span class="n">_update_parsed</span><span class="p">()</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -550,14 +543,12 @@ More acceptable for questions.</p>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-35'>#</a>
       </div>
-      <p>TODO: understand why it is problem here</p>
+      <p>subs_self = link_parser.substitute(self.parsed)
+similarity = 0</p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">subs_self</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">similarity</span> <span class="o">=</span> <span class="n">similarity</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">subs_self</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">similarity</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">return</span> <span class="n">similarity</span></pre></div>
+      <div class="highlight"><pre>        <span class="n">flexibles_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">flex</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="k">for</span> <span class="n">flex</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">flexibles</span><span class="p">]</span>
+        <span class="n">similarity</span> <span class="o">=</span> <span class="n">link_parser</span><span class="o">.</span><span class="n">compare</span><span class="p">(</span><span class="n">flexibles_ids</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsed</span><span class="p">,</span> <span class="n">input_phrase</span><span class="p">)</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -565,6 +556,23 @@ More acceptable for questions.</p>
     <div class='docs'>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-36'>#</a>
+      </div>
+      <p>rejection of phrase in case of invalid parsing</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="n">rejection</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">setter</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">flexibles</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">link_parser</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">setter</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsed</span><span class="p">,</span> <span class="n">input_phrase</span><span class="p">)</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">rejection</span> <span class="o">=</span> <span class="p">[</span><span class="n">setter</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+                <span class="k">break</span>
+        <span class="k">return</span> <span class="n">similarity</span><span class="p">,</span> <span class="n">rejection</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-37'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-37'>#</a>
       </div>
       
     </div>

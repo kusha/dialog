@@ -34,11 +34,13 @@
     <div class='code'>
       <div class="highlight"><pre><span class="n">__author__</span> <span class="o">=</span> <span class="s">&quot;Mark Birger&quot;</span>
 <span class="n">__date__</span> <span class="o">=</span> <span class="s">&quot;19 Nov 2014&quot;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s">&quot;0.3&quot;</span>
 
+
+<span class="kn">from</span> <span class="nn">dialog</span> <span class="kn">import</span> <span class="n">STORAGEPATH</span>
 <span class="kn">from</span> <span class="nn">dialog.parser</span> <span class="kn">import</span> <span class="n">Parser</span>
 <span class="kn">from</span> <span class="nn">dialog.scope</span> <span class="kn">import</span> <span class="n">Scope</span>
 <span class="kn">from</span> <span class="nn">dialog.returns</span> <span class="kn">import</span> <span class="n">Returns</span>
-<span class="kn">import</span> <span class="nn">dialog.speech</span> <span class="kn">as</span> <span class="nn">speech</span>
 <span class="kn">import</span> <span class="nn">dialog.link_parser</span> <span class="kn">as</span> <span class="nn">link_parser</span>
 
 <span class="kn">import</span> <span class="nn">multiprocessing</span></pre></div>
@@ -53,7 +55,11 @@
       <p>import sys</p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre><span class="kn">import</span> <span class="nn">argparse</span></pre></div>
+      <div class="highlight"><pre><span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">signal</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">socket</span> <span class="kn">import</span> <span class="o">*</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -66,7 +72,7 @@
 TTS = "att"</p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre></pre></div>
+      <div class="highlight"><pre><span class="n">THRESHOLD</span> <span class="o">=</span> <span class="mf">0.2</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -90,22 +96,23 @@ TTS = "att"</p>
       
     </div>
     <div class='code'>
-      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scope</span><span class="p">):</span>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scope</span><span class="p">,</span> <span class="n">storage</span><span class="o">=</span><span class="s">&quot;./&quot;</span><span class="p">):</span>
 
-        <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
-            <span class="n">description</span><span class="o">=</span><span class="n">__doc__</span><span class="p">,</span>
-            <span class="n">epilog</span><span class="o">=</span><span class="n">__author__</span><span class="o">+</span><span class="s">&quot; &quot;</span><span class="o">+</span><span class="n">__date__</span><span class="p">)</span>
-        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s">&#39;--version&#39;</span><span class="p">,</span>
-            <span class="n">action</span><span class="o">=</span><span class="s">&#39;version&#39;</span><span class="p">,</span>
-            <span class="n">version</span><span class="o">=</span><span class="s">&#39;</span><span class="si">%(prog)s</span><span class="s"> &#39;</span><span class="o">+</span><span class="n">__version__</span><span class="p">)</span>
-        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s">&#39;-s&#39;</span><span class="p">,</span>
-            <span class="s">&#39;--spoken&#39;</span><span class="p">,</span> 
-            <span class="n">action</span><span class="o">=</span><span class="s">&#39;store_true&#39;</span><span class="p">,</span>
-            <span class="n">required</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> 
-            <span class="n">help</span><span class="o">=</span><span class="s">&#39;run as a spoken dialog system&#39;</span><span class="p">,</span>
-            <span class="n">dest</span><span class="o">=</span><span class="s">&#39;is_spoken&#39;</span><span class="p">)</span></pre></div>
+        <span class="k">global</span> <span class="n">STORAGEPATH</span>
+        <span class="n">STORAGEPATH</span> <span class="o">=</span> <span class="n">storage</span> <span class="o">+</span> <span class="n">STORAGEPATH</span>
+        <span class="n">STORAGEPATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">STORAGEPATH</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&quot;Data storage path:&quot;</span><span class="p">,</span> <span class="n">STORAGEPATH</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">STORAGEPATH</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">STORAGEPATH</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">STORAGEPATH</span> <span class="o">+</span> <span class="s">&quot;/answers/&quot;</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">STORAGEPATH</span> <span class="o">+</span> <span class="s">&quot;/answers/&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">STORAGEPATH</span> <span class="o">+</span> <span class="s">&quot;/questions/&quot;</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">STORAGEPATH</span> <span class="o">+</span> <span class="s">&quot;/questions/&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">expected</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scope</span> <span class="o">=</span> <span class="n">Scope</span><span class="p">(</span><span class="n">scope</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">returns</span> <span class="o">=</span> <span class="n">Returns</span><span class="p">()</span>
+        <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGINT</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">interrupt_handler</span><span class="p">)</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -113,96 +120,6 @@ TTS = "att"</p>
     <div class='docs'>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-6'>#</a>
-      </div>
-      <p>self.parser.add_argument(
-    '-r',
-    '--register-user',
-    action='store',
-    nargs=1, 
-    type=self.validate_auth, 
-    required=False, 
-    help='register new user', 
-    metavar='username:password',
-    dest='register')
-self.parser.add_argument(
-    '-l',
-    '--log-user',
-    action='store',
-    nargs=1, 
-    type=self.validate_auth, 
-    required=False, 
-    help='login as a user', 
-    metavar='username:password',
-    dest='login')
-self.parser.add_argument(
-    '-c',
-    '--show-contactlist',
-    action='store_true',
-    required=False, 
-    help='show user contact list',
-    dest='contacts')
-self.parser.add_argument(
-    '-a',
-    '--add-user',
-    action='store',
-    nargs=1, 
-    type=str, 
-    required=False, 
-    help='adds user to contact list', 
-    metavar='JID',
-    dest='add')
-self.parser.add_argument(
-    '-m',
-    '--message',
-    action='store',
-    nargs=1, 
-    type=str, 
-    required=False, 
-    help='specify message text', 
-    metavar='message',
-    dest='message')
-self.parser.add_argument(
-    '-u',
-    '--user',
-    action='store',
-    nargs=1, 
-    type=str, 
-    required=False, 
-    help='specify JID of a recipient', 
-    metavar='JID',
-    dest='user')
-self.parser.add_argument(
-    '-w',
-    '--wait',
-    action='store',
-    nargs=1, 
-    type=int, 
-    required=False, 
-    help='wait for response ss seconds before exit', 
-    metavar='ss',
-    dest='wait')
-self.parser.add_argument(
-    '-i',
-    '--interactive',
-    action='store_true',
-    required=False, 
-    help='enables interactive mode',
-    dest='interactive')</p>
-    </div>
-    <div class='code'>
-      <div class="highlight"><pre>        <span class="bp">self</span><span class="o">.</span><span class="n">options</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">())</span>
-        <span class="k">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">expected</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">scope</span> <span class="o">=</span> <span class="n">Scope</span><span class="p">(</span><span class="n">scope</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">returns</span> <span class="o">=</span> <span class="n">Returns</span><span class="p">()</span></pre></div>
-    </div>
-  </div>
-  <div class='clearall'></div>
-  <div class='section' id='section-7'>
-    <div class='docs'>
-      <div class='octowrap'>
-        <a class='octothorpe' href='#section-7'>#</a>
       </div>
       <p>Loads dialog from the file.
 Uses Parser module.</p>
@@ -212,10 +129,10 @@ Uses Parser module.</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-8'>
+  <div class='section' id='section-7'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-8'>#</a>
+        <a class='octothorpe' href='#section-7'>#</a>
       </div>
       
     </div>
@@ -225,10 +142,10 @@ Uses Parser module.</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-9'>
+  <div class='section' id='section-8'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-9'>#</a>
+        <a class='octothorpe' href='#section-8'>#</a>
       </div>
       <p>Method extends set of expected phrases.</p>
     </div>
@@ -237,10 +154,10 @@ Uses Parser module.</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-10'>
+  <div class='section' id='section-9'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-10'>#</a>
+        <a class='octothorpe' href='#section-9'>#</a>
       </div>
       <p>TODO: more elegant way to extends expected questions</p>
     </div>
@@ -253,15 +170,28 @@ Uses Parser module.</p>
     </div>
   </div>
   <div class='clearall'></div>
+  <div class='section' id='section-10'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-10'>#</a>
+      </div>
+      <p>Symlink for start_text().</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
   <div class='section' id='section-11'>
     <div class='docs'>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-11'>#</a>
       </div>
-      <p>Text/spoken mode select method.</p>
+      
     </div>
     <div class='code'>
-      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></pre></div>
+      <div class="highlight"><pre>        <span class="k">print</span><span class="p">(</span><span class="s">&quot;Dialog system started in text mode by default.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_text</span><span class="p">()</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -273,15 +203,9 @@ Uses Parser module.</p>
       
     </div>
     <div class='code'>
-      <div class="highlight"><pre>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s">&quot;is_spoken&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s">&quot;is_spoken&quot;</span><span class="p">]:</span>
-                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_spoken</span><span class="p">()</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_text</span><span class="p">()</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">print</span><span class="p">(</span><span class="s">&quot;Dialog system started in text mode by deafult.&quot;</span><span class="p">)</span>
-            <span class="k">print</span><span class="p">(</span><span class="s">&quot;Use -s option to run spoken mode.&quot;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_text</span><span class="p">()</span></pre></div>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">interpret</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_phrase</span><span class="p">):</span>
+        <span class="n">states_probability</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">expected</span><span class="p">:</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -290,10 +214,32 @@ Uses Parser module.</p>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-13'>#</a>
       </div>
-      <p>Interprets dialog with natural speech.</p>
+      <p>print(state, state.compare(input_phrase))</p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">start_spoken</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></pre></div>
+      <div class="highlight"><pre>            <span class="n">states_probability</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">state</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">compare</span><span class="p">(</span><span class="n">input_phrase</span><span class="p">)))</span>
+        <span class="n">states_probability</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">states_probability</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]),</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">allowed_states_probability</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">no_separator</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&quot;======&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">states_probability</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]):</span>
+                <span class="n">rejected</span> <span class="o">=</span> <span class="s">&quot;R&quot;</span>
+                <span class="n">due</span> <span class="o">=</span> <span class="s">&quot;(</span><span class="si">%s</span><span class="s">)&quot;</span> <span class="o">%</span> <span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">rejected</span> <span class="o">=</span> <span class="s">&quot; &quot;</span>
+                <span class="n">due</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+                <span class="n">allowed_states_probability</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">no_separator</span> <span class="ow">and</span> <span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">THRESHOLD</span><span class="p">:</span>
+                <span class="n">no_separator</span> <span class="o">=</span> <span class="bp">False</span>
+                <span class="k">print</span><span class="p">(</span><span class="s">&quot;------&quot;</span><span class="p">)</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%.2f</span><span class="s"> [</span><span class="si">%i</span><span class="s">] </span><span class="si">%s</span><span class="s">  </span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">rejected</span><span class="p">,</span> <span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">due</span><span class="p">))</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&quot;======&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">allowed_states_probability</span><span class="p">)</span> <span class="ow">or</span> \
+            <span class="n">allowed_states_probability</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">THRESHOLD</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&quot;Bot&gt; ???&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">None</span>
+        <span class="k">return</span> <span class="n">allowed_states_probability</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -302,10 +248,23 @@ Uses Parser module.</p>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-14'>#</a>
       </div>
+      <p>Interprets dialog with natural speech.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">start_spoken</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-15'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-15'>#</a>
+      </div>
       
     </div>
     <div class='code'>
-      <div class="highlight"><pre>        <span class="n">occupation</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Event</span><span class="p">()</span>
+      <div class="highlight"><pre>        <span class="kn">import</span> <span class="nn">dialog.speech</span> <span class="kn">as</span> <span class="nn">speech</span>
+        <span class="n">occupation</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Event</span><span class="p">()</span>
         <span class="n">listener_queue</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Queue</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">recognizer_queue</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Queue</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">speaker_queue</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Queue</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -324,16 +283,16 @@ Uses Parser module.</p>
         <span class="n">occupation</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
         <span class="k">print</span><span class="p">(</span><span class="s">&quot;======&quot;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">expected</span><span class="p">:</span>
-            <span class="k">print</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\t</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">state</span><span class="p">))</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">    </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">state</span><span class="p">))</span>
         <span class="k">print</span><span class="p">(</span><span class="s">&quot;======&quot;</span><span class="p">)</span>
         <span class="k">while</span> <span class="bp">True</span><span class="p">:</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-15'>
+  <div class='section' id='section-16'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-15'>#</a>
+        <a class='octothorpe' href='#section-16'>#</a>
       </div>
       <p>process routines answers</p>
     </div>
@@ -347,10 +306,10 @@ Uses Parser module.</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-16'>
+  <div class='section' id='section-17'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-16'>#</a>
+        <a class='octothorpe' href='#section-17'>#</a>
       </div>
       <p>process input</p>
     </div>
@@ -358,29 +317,8 @@ Uses Parser module.</p>
       <div class="highlight"><pre>            <span class="k">if</span> <span class="ow">not</span> <span class="n">listener_queue</span><span class="o">.</span><span class="n">empty</span><span class="p">():</span>
                 <span class="n">input_phrase</span> <span class="o">=</span> <span class="n">listener_queue</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
                 <span class="n">input_phrase</span> <span class="o">=</span> <span class="n">link_parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">input_phrase</span><span class="p">)</span>
-                <span class="n">states_probability</span> <span class="o">=</span> <span class="p">[]</span>
-                <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">expected</span><span class="p">:</span></pre></div>
-    </div>
-  </div>
-  <div class='clearall'></div>
-  <div class='section' id='section-17'>
-    <div class='docs'>
-      <div class='octowrap'>
-        <a class='octothorpe' href='#section-17'>#</a>
-      </div>
-      <p>print(state, state.compare(input_phrase))</p>
-    </div>
-    <div class='code'>
-      <div class="highlight"><pre>                    <span class="n">states_probability</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">state</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">compare</span><span class="p">(</span><span class="n">input_phrase</span><span class="p">)))</span>
-                <span class="n">states_probability</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">states_probability</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-                <span class="k">print</span><span class="p">(</span><span class="s">&quot;======&quot;</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">states_probability</span><span class="p">:</span>
-                    <span class="k">print</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%.2f</span><span class="se">\t</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
-                <span class="k">print</span><span class="p">(</span><span class="s">&quot;======&quot;</span><span class="p">)</span>
-                <span class="n">state</span> <span class="o">=</span> <span class="n">states_probability</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-                <span class="k">if</span> <span class="n">states_probability</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.2</span><span class="p">:</span>
-                    <span class="k">print</span><span class="p">(</span><span class="s">&quot;Bot&gt; ???&quot;</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
+                <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpret</span><span class="p">(</span><span class="n">input_phrase</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">state</span><span class="p">:</span>
                     <span class="n">tosay</span><span class="p">,</span> <span class="n">questions</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">accept</span><span class="p">(</span><span class="n">input_phrase</span><span class="p">)</span>
                     <span class="k">for</span> <span class="n">answer</span> <span class="ow">in</span> <span class="n">tosay</span><span class="p">:</span>
                         <span class="k">if</span> <span class="n">answer</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span><span class="p">:</span>
@@ -412,7 +350,7 @@ Uses Parser module.</p>
     <div class='code'>
       <div class="highlight"><pre>        <span class="k">print</span><span class="p">(</span><span class="s">&quot;======&quot;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">expected</span><span class="p">:</span>
-            <span class="k">print</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\t</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">state</span><span class="p">))</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">    </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">state</span><span class="p">))</span>
         <span class="k">print</span><span class="p">(</span><span class="s">&quot;======&quot;</span><span class="p">)</span>
         <span class="k">while</span> <span class="bp">True</span><span class="p">:</span></pre></div>
     </div>
@@ -443,12 +381,7 @@ Uses Parser module.</p>
     </div>
     <div class='code'>
       <div class="highlight"><pre>            <span class="n">input_phrase</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s">&quot;You&gt; &quot;</span><span class="p">)</span>
-            <span class="k">while</span> <span class="ow">not</span> <span class="n">input_phrase</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
-                <span class="k">print</span><span class="p">(</span><span class="s">&quot;Empty input string&quot;</span><span class="p">)</span>
-                <span class="n">input_phrase</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s">&quot;You&gt; &quot;</span><span class="p">)</span>
-            <span class="n">input_phrase</span> <span class="o">=</span> <span class="n">link_parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">input_phrase</span><span class="p">)</span>
-            <span class="n">states_probability</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">expected</span><span class="p">:</span></pre></div>
+            <span class="k">while</span> <span class="ow">not</span> <span class="n">input_phrase</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -457,24 +390,11 @@ Uses Parser module.</p>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-22'>#</a>
       </div>
-      <p>print(state, state.compare(input_phrase))</p>
+      <p>print("Empty input string")
+process routines second time! duplex tests</p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre>                <span class="n">states_probability</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">state</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">compare</span><span class="p">(</span><span class="n">input_phrase</span><span class="p">)))</span>
-            <span class="n">states_probability</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">states_probability</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-            <span class="k">print</span><span class="p">(</span><span class="s">&quot;======&quot;</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">states_probability</span><span class="p">:</span>
-                <span class="k">print</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%.2f</span><span class="se">\t</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
-            <span class="k">print</span><span class="p">(</span><span class="s">&quot;======&quot;</span><span class="p">)</span>
-            <span class="n">state</span> <span class="o">=</span> <span class="n">states_probability</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">states_probability</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.2</span><span class="p">:</span>
-                <span class="k">print</span><span class="p">(</span><span class="s">&quot;Bot&gt; ???&quot;</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">tosay</span><span class="p">,</span> <span class="n">questions</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">accept</span><span class="p">(</span><span class="n">input_phrase</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">answer</span> <span class="ow">in</span> <span class="n">tosay</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">answer</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span><span class="p">:</span>
-                        <span class="k">print</span><span class="p">(</span><span class="s">&quot;Bot&gt; &quot;</span><span class="o">+</span><span class="n">answer</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_extend_expected</span><span class="p">(</span><span class="n">questions</span><span class="p">)</span></pre></div>
+      <div class="highlight"><pre>                <span class="n">answers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">returns</span><span class="o">.</span><span class="n">get_returns</span><span class="p">()</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -483,11 +403,22 @@ Uses Parser module.</p>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-23'>#</a>
       </div>
-      <p>Decorator wrapper, which wraps duplex routine.
-Recives decorator params (callbacks).</p>
+      <p>print(answers)</p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre><span class="k">def</span> <span class="nf">handle</span><span class="p">(</span><span class="n">callbacks</span><span class="p">,</span> <span class="n">before</span><span class="o">=</span><span class="k">lambda</span> <span class="n">scope</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span> <span class="n">after</span><span class="o">=</span><span class="k">lambda</span> <span class="n">scope</span><span class="p">:</span> <span class="bp">None</span><span class="p">):</span></pre></div>
+      <div class="highlight"><pre>                <span class="k">for</span> <span class="n">answer</span> <span class="ow">in</span> <span class="n">answers</span><span class="p">:</span>
+                    <span class="n">tosay</span><span class="p">,</span> <span class="n">questions</span> <span class="o">=</span> <span class="n">answer</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+                    <span class="k">print</span><span class="p">(</span><span class="s">&quot;Bot&gt; &quot;</span><span class="o">+</span><span class="n">tosay</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_extend_expected</span><span class="p">(</span><span class="n">questions</span><span class="p">)</span>
+                <span class="n">input_phrase</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s">&quot;You&gt; &quot;</span><span class="p">)</span>
+            <span class="n">input_phrase</span> <span class="o">=</span> <span class="n">link_parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">input_phrase</span><span class="p">)</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpret</span><span class="p">(</span><span class="n">input_phrase</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">state</span><span class="p">:</span>
+                <span class="n">tosay</span><span class="p">,</span> <span class="n">questions</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">accept</span><span class="p">(</span><span class="n">input_phrase</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">answer</span> <span class="ow">in</span> <span class="n">tosay</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">answer</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span><span class="p">:</span>
+                        <span class="k">print</span><span class="p">(</span><span class="s">&quot;Bot&gt; &quot;</span><span class="o">+</span><span class="n">answer</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_extend_expected</span><span class="p">(</span><span class="n">questions</span><span class="p">)</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -496,10 +427,10 @@ Recives decorator params (callbacks).</p>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-24'>#</a>
       </div>
-      <p>Decorator, which recieves duplex routine function.</p>
+      <p>Listens socket for input phrases.</p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">async_func</span><span class="p">):</span></pre></div>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">start_socket</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">42424</span><span class="p">):</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -507,6 +438,151 @@ Recives decorator params (callbacks).</p>
     <div class='docs'>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-25'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="n">host</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+        <span class="n">buf</span> <span class="o">=</span> <span class="mi">1024</span>
+        <span class="n">addr</span> <span class="o">=</span> <span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
+        <span class="n">UDPSock</span> <span class="o">=</span> <span class="n">socket</span><span class="p">(</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">SOCK_DGRAM</span><span class="p">)</span>
+        <span class="n">UDPSock</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">addr</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&quot;Listening socket&quot;</span><span class="p">)</span>
+
+        <span class="n">occupation</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Event</span><span class="p">()</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-26'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-26'>#</a>
+      </div>
+      <p>listener_queue = multiprocessing.Queue(maxsize=0)
+recognizer_queue = multiprocessing.Queue(maxsize=0)</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="n">speaker_queue</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Queue</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">speaker</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span>
+            <span class="n">target</span><span class="o">=</span><span class="n">speech</span><span class="o">.</span><span class="n">speaker</span><span class="p">,</span>
+            <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">occupation</span><span class="p">,</span> <span class="n">speaker_queue</span><span class="p">,</span> <span class="p">))</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-27'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-27'>#</a>
+      </div>
+      <p>recognizer = multiprocessing.Process(
+    target=speech.recognizer,
+    args=(recognizer_queue, listener_queue, ))
+listener = multiprocessing.Process(
+    target=speech.listener,
+    args=(occupation, recognizer_queue, ))</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="n">speaker</span><span class="o">.</span><span class="n">start</span><span class="p">()</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-28'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-28'>#</a>
+      </div>
+      <p>recognizer.start()
+listener.start()</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="n">occupation</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+
+        <span class="k">print</span><span class="p">(</span><span class="s">&quot;======&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">expected</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">    </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">state</span><span class="p">))</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&quot;======&quot;</span><span class="p">)</span>
+        <span class="k">while</span> <span class="bp">True</span><span class="p">:</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-29'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-29'>#</a>
+      </div>
+      <p>process routines answers</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>            <span class="n">answers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">returns</span><span class="o">.</span><span class="n">get_returns</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">answer</span> <span class="ow">in</span> <span class="n">answers</span><span class="p">:</span>
+                <span class="n">tosay</span><span class="p">,</span> <span class="n">questions</span> <span class="o">=</span> <span class="n">answer</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+                <span class="n">speaker_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">tosay</span><span class="p">)</span>
+                <span class="k">print</span><span class="p">(</span><span class="s">&quot;Bot&gt; &quot;</span><span class="o">+</span><span class="n">tosay</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_extend_expected</span><span class="p">(</span><span class="n">questions</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-30'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-30'>#</a>
+      </div>
+      <p>process input</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>            <span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">addr</span><span class="p">)</span> <span class="o">=</span> <span class="n">UDPSock</span><span class="o">.</span><span class="n">recvfrom</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span>
+            <span class="n">input_phrase</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s">&quot;utf-8&quot;</span><span class="p">)</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&quot;You&gt; &quot;</span><span class="o">+</span><span class="n">input_phrase</span><span class="p">)</span>
+            <span class="k">while</span> <span class="ow">not</span> <span class="n">input_phrase</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+                <span class="k">print</span><span class="p">(</span><span class="s">&quot;Empty input string&quot;</span><span class="p">)</span>
+                <span class="n">input_phrase</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s">&quot;You&gt; &quot;</span><span class="p">)</span>
+            <span class="n">input_phrase</span> <span class="o">=</span> <span class="n">link_parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">input_phrase</span><span class="p">)</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpret</span><span class="p">(</span><span class="n">input_phrase</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">state</span><span class="p">:</span>
+                <span class="n">tosay</span><span class="p">,</span> <span class="n">questions</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">accept</span><span class="p">(</span><span class="n">input_phrase</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">answer</span> <span class="ow">in</span> <span class="n">tosay</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">answer</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span><span class="p">:</span>
+                        <span class="n">speaker_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">answer</span><span class="p">)</span>
+                        <span class="k">print</span><span class="p">(</span><span class="s">&quot;Bot&gt; &quot;</span><span class="o">+</span><span class="n">answer</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_extend_expected</span><span class="p">(</span><span class="n">questions</span><span class="p">)</span>
+        <span class="n">UDPSock</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-31'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-31'>#</a>
+      </div>
+      <p>Decorator wrapper, which wraps duplex routine.
+Recives decorator params (callbacks).</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">interrupt_handler</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&quot;INFO: dialog system process is closed&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">handle</span><span class="p">(</span><span class="n">callbacks</span><span class="p">,</span> <span class="n">before</span><span class="o">=</span><span class="k">lambda</span> <span class="n">scope</span><span class="p">,</span> <span class="n">responses</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span> <span class="n">after</span><span class="o">=</span><span class="k">lambda</span> <span class="n">scope</span><span class="p">,</span> <span class="n">responses</span><span class="p">:</span> <span class="bp">None</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-32'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-32'>#</a>
+      </div>
+      <p>Decorator, which recieves duplex routine function.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">async_func</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-33'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-33'>#</a>
       </div>
       <p>Resulting function, with changed behavior.
 Called by dialog system.</p>
@@ -516,10 +592,10 @@ Called by dialog system.</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-26'>
+  <div class='section' id='section-34'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-26'>#</a>
+        <a class='octothorpe' href='#section-34'>#</a>
       </div>
       
     </div>
@@ -529,25 +605,25 @@ Called by dialog system.</p>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;__&#39;</span><span class="p">):</span>
                     <span class="n">initial_scope</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span>
             <span class="n">scope</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="p">(),</span> <span class="n">initial_scope</span><span class="p">)()</span>
-            <span class="n">before</span><span class="p">(</span><span class="n">scope</span><span class="p">)</span>
+            <span class="n">before</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="n">responses</span><span class="p">)</span>
             <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
                 <span class="k">while</span> <span class="ow">not</span> <span class="n">requests</span><span class="o">.</span><span class="n">empty</span><span class="p">():</span>
                     <span class="n">request</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
                     <span class="k">if</span> <span class="n">request</span> <span class="ow">in</span> <span class="n">callbacks</span><span class="p">:</span>
-                        <span class="n">callbacks</span><span class="p">[</span><span class="n">request</span><span class="p">](</span><span class="n">scope</span><span class="p">)</span>
+                        <span class="n">callbacks</span><span class="p">[</span><span class="n">request</span><span class="p">](</span><span class="n">scope</span><span class="p">,</span> <span class="n">responses</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="k">print</span><span class="p">(</span><span class="s">&quot;Warining: unhandled request&quot;</span><span class="p">)</span>
                         <span class="k">if</span> <span class="s">&quot;&quot;</span> <span class="ow">in</span> <span class="n">callbacks</span><span class="p">:</span>
-                            <span class="n">callbacks</span><span class="p">[</span><span class="s">&quot;&quot;</span><span class="p">](</span><span class="n">scope</span><span class="p">)</span>
+                            <span class="n">callbacks</span><span class="p">[</span><span class="s">&quot;&quot;</span><span class="p">](</span><span class="n">scope</span><span class="p">,</span> <span class="n">responses</span><span class="p">)</span>
                         <span class="k">else</span><span class="p">:</span>
                             <span class="k">pass</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-27'>
+  <div class='section' id='section-35'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-27'>#</a>
+        <a class='octothorpe' href='#section-35'>#</a>
       </div>
       <p>TODO: is it good way to finish routine?</p>
     </div>
@@ -557,12 +633,96 @@ Called by dialog system.</p>
                 <span class="n">async_func</span><span class="p">(</span><span class="n">requests</span><span class="p">,</span> <span class="n">responses</span><span class="p">,</span> <span class="n">scope</span><span class="p">)</span>
                 <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="s">&#39;_exit&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">scope</span><span class="o">.</span><span class="n">_exit</span><span class="p">:</span>
                     <span class="k">break</span>
-            <span class="n">after</span><span class="p">(</span><span class="n">scope</span><span class="p">)</span>
+            <span class="n">after</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="n">responses</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">inner</span>
-    <span class="k">return</span> <span class="n">decorator</span>
+    <span class="k">return</span> <span class="n">decorator</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-36'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-36'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">run_master</span><span class="p">():</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="n">__doc__</span><span class="p">,</span>
+        <span class="n">epilog</span><span class="o">=</span><span class="n">__author__</span><span class="o">+</span><span class="s">&quot; &quot;</span><span class="o">+</span><span class="n">__date__</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s">&#39;--version&#39;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s">&#39;version&#39;</span><span class="p">,</span>
+        <span class="n">version</span><span class="o">=</span><span class="s">&#39;</span><span class="si">%(prog)s</span><span class="s"> &#39;</span><span class="o">+</span><span class="n">__version__</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s">&#39;--spoken&#39;</span><span class="p">,</span> 
+        <span class="n">action</span><span class="o">=</span><span class="s">&#39;store_true&#39;</span><span class="p">,</span>
+        <span class="n">required</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> 
+        <span class="n">help</span><span class="o">=</span><span class="s">&#39;run as a spoken dialog system&#39;</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s">&#39;is_spoken&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s">&#39;-s&#39;</span><span class="p">,</span>
+        <span class="s">&#39;--scripts&#39;</span><span class="p">,</span>
+        <span class="n">metavar</span><span class="o">=</span><span class="s">&#39;PY&#39;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
+        <span class="n">nargs</span><span class="o">=</span><span class="s">&#39;+&#39;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s">&#39;Python scripts&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s">&#39;-d&#39;</span><span class="p">,</span>
+        <span class="s">&#39;--dialogs&#39;</span><span class="p">,</span>
+        <span class="n">metavar</span><span class="o">=</span><span class="s">&#39;DLG&#39;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
+        <span class="n">nargs</span><span class="o">=</span><span class="s">&#39;+&#39;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s">&#39;dialog descriptions&#39;</span><span class="p">)</span>
+    <span class="n">options</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">())</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-37'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-37'>#</a>
+      </div>
+      <p>print(options)</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">print</span><span class="p">(</span><span class="s">&quot;Slave mode uses exec() function! </span><span class="se">\</span>
+<span class="s">        </span><span class="se">\n</span><span class="s">You can wipe your data inside of your scripts. </span><span class="se">\</span>
+<span class="s">        </span><span class="se">\n</span><span class="s">Scripts from the parameters will be evaluated.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">input</span><span class="p">(</span><span class="s">&quot;Continue? [y/n]: &quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="s">&quot;y&quot;</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&quot;aborted&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">scope</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">options</span><span class="p">[</span><span class="s">&#39;scripts&#39;</span><span class="p">]:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s">&quot;rb&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s">&quot;utf-8&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">FileNotFoundError</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&quot;Can&#39;t find&quot;</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">exec</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">scope</span><span class="p">)</span>
+    <span class="k">del</span> <span class="n">scope</span><span class="p">[</span><span class="s">&quot;__builtins__&quot;</span><span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-38'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-38'>#</a>
+      </div>
+      <p>print(scope)</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">dialog_instance</span> <span class="o">=</span> <span class="n">Dialog</span><span class="p">(</span><span class="n">scope</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">options</span><span class="p">[</span><span class="s">&#39;dialogs&#39;</span><span class="p">]:</span>
+        <span class="n">dialog_instance</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">options</span><span class="p">[</span><span class="s">&quot;is_spoken&quot;</span><span class="p">]:</span>
+        <span class="n">dialog_instance</span><span class="o">.</span><span class="n">start_spoken</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dialog_instance</span><span class="o">.</span><span class="n">start_text</span><span class="p">()</span>
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="k">pass</span>
+    <span class="n">run_master</span><span class="p">()</span>
 
 </pre></div>
     </div>

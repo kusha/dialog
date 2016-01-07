@@ -1,0 +1,35 @@
+#move
+#	Where do i need to move?
+#		`target~station`
+#		to the `target~station`
+#		move to the `target~station`
+#			okay
+#			`move_target?`
+#				'somewhere'
+#					okay, i would like to move to the `target`
+#				'unknown'
+#					sorry
+#					i'm not able to move to the `target`
+
+#move somewhere
+
+move `speed_text~slowly` #/fast
+	`update_speed`
+
+#move faster/slower
+#move with a higher/lower speed
+#move to the station
+#go to the station
+#move for 2 meters
+#mover to the right for 2 meters
+#move for 2 seconds
+#mover to the right for 2 meters
+#rotate
+#rotate for 45 degrees
+#rotate for 45 degrees to the left
+#look at the left
+#rotate to the left
+#stop
+#stop after 2 seconds
+#move back
+#move forward/backward

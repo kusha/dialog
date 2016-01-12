@@ -1,5 +1,5 @@
 #!/bin/bash
-pyvenv-3.4 --without-pip env
+python3 -m venv --without-pip env
 source ./env/bin/activate
 curl https://bootstrap.pypa.io/get-pip.py -o - | python3
 deactivate

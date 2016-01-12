@@ -353,6 +353,8 @@ WebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.63 Safari/535.7",
 
 def recognizer_sphinx(recognizer_queue, listener_queue):
 
+
+    MODELDIR = "/usr/local/share/pocketsphinx/model"
     config = Decoder.default_config()
     config.set_string('-hmm', os.path.join(MODELDIR, 'en-us/en-us'))
     config.set_string('-lm', os.path.join(MODELDIR, 'en-us/en-us.lm.bin'))

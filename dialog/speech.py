@@ -14,9 +14,13 @@ from urllib.parse import quote
 import pyaudio, wave, math, audioop, time
 from collections import deque
 
+# from os import environ, path
+from pocketsphinx.pocketsphinx import *
+from sphinxbase.sphinxbase import *
+
 import sys
 
-ATT_API_TOKEN = "BF-ACSI~2~20150313232123~gFirQv6InqBTx9bkWEc3fMpBApKDZKk0"
+# ATT_API_TOKEN = "BF-ACSI~2~20150313232123~gFirQv6InqBTx9bkWEc3fMpBApKDZKk0"
 # TODO: solve this bug/issue
 # def get_att_token():
 #     url = 'https://api.att.com/oauth/v4/token'
@@ -32,37 +36,86 @@ ATT_API_TOKEN = "BF-ACSI~2~20150313232123~gFirQv6InqBTx9bkWEc3fMpBApKDZKk0"
 #     response = urllib.request.urlopen(req).read().decode("utf-8")
 #     return json.loads(response)["access_token"]
 
-def speaker_ATT(occupation, tosay):
+# def speaker_ATT(occupation, tosay):
+#     """
+#     TTS engine process by AT&T.
+#     """
+#     while True:
+#         text = tosay.get()
+#         url = 'https://api.att.com/speech/v3/textToSpeech'
+#         req = urllib.request.Request(
+#             url, 
+#             data=str.encode(text), 
+#             headers={
+#                 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) \
+#                 AppleWebKit/537.36 (KHTML, like Gecko) \
+#                 Chrome/35.0.1916.47 Safari/537.36',           
+#                 "Authorization": "Bearer "+ATT_API_TOKEN,
+#                 "Accept": "audio/x-wav",
+#                 "Content-Type": "text/plain"
+#             }
+#         )
+#         # try:
+#         response = urllib.request.urlopen(req)
+#         # except urllib.error.HTTPError as err:
+#         #     if err.code == 400 or err.code == 401:
+#         #         get_att_token()
+#         #         response = urllib.request.urlopen(req)
+#         global STORAGEPATH
+#         filename = STORAGEPATH + '/answers/answer_' + str(int(time.time()))
+#         output = open(filename, 'wb')
+#         output.write(response.read())
+#         output.close()
+
+#         occupation.wait()
+#         occupation.clear()
+
+#         chunk = 1024
+#         wf = wave.open(filename, 'rb')
+#         p = pyaudio.PyAudio()
+
+#         stream = p.open(
+#             format = p.get_format_from_width(wf.getsampwidth()),
+#             channels = wf.getnchannels(),
+#             rate = wf.getframerate(),
+#             output = True)
+#         data = wf.readframes(chunk)
+
+#         while data != '':
+#             stream.write(data)
+#             data = wf.readframes(chunk)
+
+#         stream.close()
+#         p.terminate()
+
+#         occupation.set()
+#         # TODO: clear answers database automatically
+#         # os.remove(filename)
+
+def speaker_pico(occupation, tosay):
     """
-    TTS engine process by AT&T.
+    TTS offline engine pico2wave.
     """
     while True:
         text = tosay.get()
-        url = 'https://api.att.com/speech/v3/textToSpeech'
-        req = urllib.request.Request(
-            url, 
-            data=str.encode(text), 
-            headers={
-                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) \
-                AppleWebKit/537.36 (KHTML, like Gecko) \
-                Chrome/35.0.1916.47 Safari/537.36',           
-                "Authorization": "Bearer "+ATT_API_TOKEN,
-                "Accept": "audio/x-wav",
-                "Content-Type": "text/plain"
-            }
-        )
-        # try:
-        response = urllib.request.urlopen(req)
-        # except urllib.error.HTTPError as err:
-        #     if err.code == 400 or err.code == 401:
-        #         get_att_token()
-        #         response = urllib.request.urlopen(req)
+
         global STORAGEPATH
         filename = STORAGEPATH + '/answers/answer_' + str(int(time.time()))
-        output = open(filename, 'wb')
-        output.write(response.read())
-        output.close()
 
+        command = ['pico2wave', '-w=%s.wav'%(filename, ), '"%s"'%(text, )]
+        devnull = open('/dev/null', 'w')
+        tts = subprocess.Popen(command, stdout=devnull, stderr=devnull)
+        tts.wait()
+
+        # proc = subprocess.Popen(
+        #     ['pico2wave', '-w=%s.wav'%(filename, ), '"Okay, i\'m moving forward"'],
+        #     stdin=subprocess.PIPE,
+        #     stdout=subprocess.PIPE,
+        #     stderr=subprocess.PIPE))
+        # if proc.returncode != 0:
+        #     print("ERROR: pico2wave TTS failed")
+        #     sys.exit(1)
+        
         occupation.wait()
         occupation.clear()
 
@@ -218,35 +271,35 @@ def listener(occupation, recognizer_queue, threshold=2500, silence_limit=1):
             # record data for future prepend
             previuos.append(current_data)
 
-def recognizer_att(recognizer_queue, listener_queue):
-    while True:
-        data, sample_size, rate = recognizer_queue.get()
+# def recognizer_att(recognizer_queue, listener_queue):
+#     while True:
+#         data, sample_size, rate = recognizer_queue.get()
 
-        url = 'https://api.att.com/speech/v3/speechToText'
-        req = urllib.request.Request(
-            url, 
-            data=data, 
-            headers={
-                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) \
-                AppleWebKit/537.36 (KHTML, like Gecko) \
-                Chrome/35.0.1916.47 Safari/537.36',           
-                "Authorization": "Bearer "+ATT_API_TOKEN,
-                "Accept": "application/json",
-                "Content-Type": "audio/raw;coding=linear;rate=16000;byteorder=LE"
-            }
-        )
-        # try:
-        response = urllib.request.urlopen(req)
-        # except urllib.error.HTTPError as err:
-        #     print("warn")
-        #     if err.code == 400 or err.code == 401:
-        #         get_att_token()
-        #         response = urllib.request.urlopen(req)
-        result = json.loads(response.read().decode("utf-8"))["Recognition"]
-        if result["Status"] == "OK":
-            listener_queue.put(result["NBest"][0]["ResultText"])
-        else:
-            print("You> ???")
+#         url = 'https://api.att.com/speech/v3/speechToText'
+#         req = urllib.request.Request(
+#             url, 
+#             data=data, 
+#             headers={
+#                 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) \
+#                 AppleWebKit/537.36 (KHTML, like Gecko) \
+#                 Chrome/35.0.1916.47 Safari/537.36',           
+#                 "Authorization": "Bearer "+ATT_API_TOKEN,
+#                 "Accept": "application/json",
+#                 "Content-Type": "audio/raw;coding=linear;rate=16000;byteorder=LE"
+#             }
+#         )
+#         # try:
+#         response = urllib.request.urlopen(req)
+#         # except urllib.error.HTTPError as err:
+#         #     print("warn")
+#         #     if err.code == 400 or err.code == 401:
+#         #         get_att_token()
+#         #         response = urllib.request.urlopen(req)
+#         result = json.loads(response.read().decode("utf-8"))["Recognition"]
+#         if result["Status"] == "OK":
+#             listener_queue.put(result["NBest"][0]["ResultText"])
+#         else:
+#             print("You> ???")
 
 def recognizer(recognizer_queue, listener_queue):
     while True:
@@ -297,3 +350,33 @@ WebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.63 Safari/535.7",
             result = json.loads(response)['result'][0]['alternative'][0]['transcript']
             print("You> "+result)
             listener_queue.put(result)
+
+def recognizer_sphinx(recognizer_queue, listener_queue):
+
+    config = Decoder.default_config()
+    config.set_string('-hmm', os.path.join(MODELDIR, 'en-us/en-us'))
+    config.set_string('-lm', os.path.join(MODELDIR, 'en-us/en-us.lm.bin'))
+    config.set_string('-dict', os.path.join(MODELDIR, 'en-us/cmudict-en-us.dict'))
+    config.set_string('-logfn', 'nul')
+    # decoder = Decoder(config)
+
+    while True:
+        data, sample_size, rate = recognizer_queue.get()
+
+        decoder = Decoder(config)
+        decoder.start_utt()
+        decoder.process_raw(data, False, False)
+        decoder.end_utt()
+
+        phrase = ""
+        for seg in decoder.seg():
+            if not (seg.word.startswith("<") or seg.word.startswith("[")):
+                phrase += seg.word + " "
+        phrase.strip()
+
+        if phrase == "":
+            print("You> ???")
+        else:
+            print("You> "+phrase)
+            listener_queue.put(phrase)
+

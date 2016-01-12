@@ -150,6 +150,53 @@ class Dialog:
                             print("Bot> "+answer)
                     self._extend_expected(questions)
 
+    def start_offline(self):
+        """
+        Interprets dialog with offline TTS and STT.
+        """
+        import dialog.speech as speech
+        occupation = multiprocessing.Event()
+        listener_queue = multiprocessing.Queue(maxsize=0)
+        recognizer_queue = multiprocessing.Queue(maxsize=0)
+        speaker_queue = multiprocessing.Queue(maxsize=0)
+        speaker = multiprocessing.Process(
+            target=speech.speaker_pico,
+            args=(occupation, speaker_queue, ))
+        recognizer = multiprocessing.Process(
+            target=speech.recognizer_sphinx,
+            args=(recognizer_queue, listener_queue, ))
+        listener = multiprocessing.Process(
+            target=speech.listener,
+            args=(occupation, recognizer_queue, ))
+        speaker.start()
+        recognizer.start()
+        listener.start()
+        occupation.set()
+        print("======")
+        for state in self.expected:
+            print("\t    %s" % (state))
+        print("======")
+        while True:
+            # process routines answers
+            answers = self.returns.get_returns()
+            for answer in answers:
+                tosay, questions = answer.accept()
+                speaker_queue.put(tosay)
+                print("Bot> "+tosay)
+                self._extend_expected(questions)
+            # process input
+            if not listener_queue.empty():
+                input_phrase = listener_queue.get()
+                input_phrase = link_parser.parse(input_phrase)
+                state = self.interpret(input_phrase)
+                if state:
+                    tosay, questions = state.accept(input_phrase)
+                    for answer in tosay:
+                        if answer != "":
+                            speaker_queue.put(answer)
+                            print("Bot> "+answer)
+                    self._extend_expected(questions)
+
     def start_text(self):
         """
         Interprets dialog in text mode.

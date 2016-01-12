@@ -1,4 +1,5 @@
-#move
+move `movement_way~straight`
+	ok, moving `movement_way`
 #	Where do i need to move?
 #		`target~station`
 #		to the `target~station`
@@ -13,8 +14,8 @@
 
 #move somewhere
 
-move `speed_text~slowly` #/fast
-	`update_speed`
+#move `speed_text~slowly` #/fast
+#	`update_speed`
 
 #move faster/slower
 #move with a higher/lower speed

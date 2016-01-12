@@ -5,10 +5,34 @@ ROB 2015
 
 Robot movement interface.
 """
-import random
-
+import random, sys
 
 from dialog import Dialog, handle
+
+# import execnet
+# gw = execnet.makegateway("popen//python=python2.7")
+# channel = gw.remote_exec("""
+#     import rospy
+#     from geometry_msgs.msg import Twist
+#     rospy.init_node('move')
+#     p = rospy.Publisher('/base_controller/command', Twist)
+#     while True:
+#         # command format
+#         # lx ly lz ax ay az d
+#         command = channel.receive()
+#         values = [float(i) for i in command.split(' ')]
+#         channel.send("accepted")
+#         movement = Twist()
+#         movement.linear.x = values[0]
+#         movement.linear.y = values[1]
+#         movement.linear.z = values[2]
+#         movement.angular.x = values[3]
+#         movement.angular.y = values[4]
+#         movement.angular.z = values[5]
+#         p.publish(movement)
+#         rospy.sleep(values[6])
+# """)
+
 
 target = None
 
@@ -53,4 +77,12 @@ moving = False
 if __name__ == "__main__":
     DLG = Dialog(globals())
     DLG.load("examples/robot_control/dialog.dlg")
-    DLG.start()
+    if len(sys.argv) > 1:
+        option = sys.argv[1]
+        if option == "-t":
+            DLG.start()
+        elif option == "-s":
+            DLG.start_spoken()
+        elif option == "-o":
+            DLG.start_offline()
+

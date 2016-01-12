@@ -7,6 +7,7 @@ source env/bin/activate
 pip3 install ./
 easy_install-3.4 pyaudio
 pip3 install execnet
+pip3 install pocketsphinx
 wget http://www.abisource.com/downloads/link-grammar/5.2.5/link-grammar-5.2.5.tar.gz
 tar -xzf link-grammar-5.2.5.tar.gz
 rm link-grammar-5.2.5.tar.gz

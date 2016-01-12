@@ -74,10 +74,12 @@ from dialog import Dialog, handle
 
 # moving = False
 
+stop = False
 movement_way = None
 
 def stop(scope, responses):
-	scope.exit = True
+	scope._exit = True
+	responses.put("stopped")
 
 callbacks = {
 	"stop" : stop

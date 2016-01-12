@@ -1,5 +1,9 @@
 move `movement_way~straight`
 	ok, moving `movement_way`
+	`move?!`
+		stop
+			ok, stopping right now `move < "stop"`
+
 #	Where do i need to move?
 #		`target~station`
 #		to the `target~station`
